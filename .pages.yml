@@ -1,0 +1,178 @@
+media:
+  input: src/assets/uploads
+  output: /assets/uploads
+
+content:
+  - name: reviews
+    label: Reviews
+    type: collection
+    path: src/reviews
+    format: yaml-frontmatter
+    filename: "{year}-{month}-{day}-{fields.slug}.md"
+    view:
+      fields: [title, type, platform, rating, verdict, date]
+      primary: title
+      sort: [date, title]
+      default:
+        sort: date
+        order: desc
+    fields:
+      - name: title
+        label: Title
+        type: string
+        required: true
+      - name: slug
+        label: URL Slug
+        type: string
+        required: true
+        description: Clean URL slug without spaces (e.g. 12th-fail)
+      - name: tmdb_id
+        label: TMDB ID
+        type: number
+        required: true
+        description: Numeric ID from themoviedb.org
+      - name: type
+        label: Format Type
+        type: select
+        required: true
+        default: movie
+        options:
+          values:
+            - movie
+            - tv
+      - name: season
+        label: Season (Web Series only)
+        type: number
+        description: Optional season number for web series reviews
+      - name: date
+        label: Publish Date
+        type: date
+        required: true
+      - name: rating
+        label: Rating (0 - 10)
+        type: number
+        required: true
+        options:
+          min: 0
+          max: 10
+          step: 0.1
+      - name: verdict
+        label: Verdict
+        type: select
+        required: true
+        options:
+          values:
+            - Must Watch
+            - Worth Watching
+            - One-Time Watch
+            - Skip It
+      - name: short_summary
+        label: Short Summary
+        type: text
+        required: true
+        description: Concise 1-2 line editorial takeaway
+      - name: platform
+        label: Primary Platform
+        type: select
+        required: true
+        options:
+          values:
+            - Netflix
+            - Prime Video
+            - JioHotstar
+            - ZEE5
+            - SonyLIV
+            - Theatre
+            - Other
+      - name: language
+        label: Language
+        type: string
+        required: true
+        default: Hindi
+      - name: genres
+        label: Genre Overrides (optional)
+        type: string
+        list: true
+        description: Leave empty to use TMDB genres automatically
+      - name: seo_title
+        label: SEO Title (optional)
+        type: string
+      - name: seo_description
+        label: SEO Meta Description (optional)
+        type: text
+      - name: has_spoilers
+        label: Contains Spoilers
+        type: boolean
+        default: false
+      - name: author
+        label: Author
+        type: string
+        required: true
+        default: Moview Editorial
+      - name: body
+        label: Review Body
+        type: rich-text
+        options:
+          format: markdown
+
+  - name: lists
+    label: Lists
+    type: collection
+    path: src/lists
+    format: yaml-frontmatter
+    filename: "{year}-{month}-{day}-{fields.slug}.md"
+    view:
+      fields: [title, date]
+      primary: title
+      sort: [date, title]
+      default:
+        sort: date
+        order: desc
+    fields:
+      - name: title
+        label: List Title
+        type: string
+        required: true
+      - name: slug
+        label: URL Slug
+        type: string
+        required: true
+      - name: date
+        label: Publish Date
+        type: date
+        required: true
+      - name: intro
+        label: Introduction
+        type: text
+        required: true
+      - name: seo_title
+        label: SEO Title (optional)
+        type: string
+      - name: seo_description
+        label: SEO Meta Description (optional)
+        type: text
+      - name: items
+        label: Titles in List
+        type: object
+        list:
+          collapsible:
+            collapsed: false
+            summary: "TMDB #{fields.tmdb_id} ({fields.type})"
+        fields:
+          - name: tmdb_id
+            label: TMDB ID
+            type: number
+            required: true
+          - name: type
+            label: Format Type
+            type: select
+            required: true
+            default: movie
+            options:
+              values:
+                - movie
+                - tv
+          - name: note
+            label: Short Note
+            type: text
+            required: true
