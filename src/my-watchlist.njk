@@ -1,0 +1,70 @@
+---
+layout: layouts/base.njk
+title: "My Watchlist"
+seo_title: "My Watchlist | Moview"
+seo_description: "Manage your Watched, Want to Watch, and Maybe Later movie and web series lists on Moview."
+permalink: /my-watchlist/index.html
+noindex: true
+---
+
+<div id="my-watchlist-root" class="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:py-14">
+  <header class="border-b border-white/10 pb-6">
+    <h1 class="font-display text-3xl font-bold tracking-tight text-[#F5F5F5] sm:text-4xl">
+      My Watchlist
+    </h1>
+    <p class="mt-2 text-sm text-zinc-400">
+      Organize what you have watched, want to queue up, or might check out later.
+    </p>
+  </header>
+
+  <div id="watchlist-signed-out" class="mt-8 hidden rounded-lg border border-white/10 bg-[#181A20] p-8">
+    <p class="text-base font-medium text-[#F5F5F5]">Sign in to view your watchlist</p>
+    <p class="mt-1.5 text-sm text-zinc-400">
+      Your saved movies and web series sync across devices once you sign in.
+    </p>
+    <button
+      type="button"
+      data-auth-signin-trigger
+      class="mt-5 rounded-md bg-[#E50914] px-5 py-2.5 text-xs font-semibold text-white hover:bg-[#F40612]"
+    >
+      Sign in
+    </button>
+  </div>
+
+  <div id="watchlist-signed-in" class="mt-8 hidden">
+    <div class="flex flex-wrap items-center gap-2 border-b border-white/10 pb-4" role="tablist" aria-label="Watchlist statuses">
+      <button
+        type="button"
+        role="tab"
+        data-watchlist-tab="watched"
+        aria-selected="true"
+        class="rounded-md bg-[#E50914] px-4 py-2 text-xs font-semibold text-white whitespace-nowrap"
+      >
+        &#9989; Watched (<span data-tab-count="watched" class="tabular-nums">0</span>)
+      </button>
+      <button
+        type="button"
+        role="tab"
+        data-watchlist-tab="want_to_watch"
+        aria-selected="false"
+        class="rounded-md border border-white/15 bg-[#181A20] px-4 py-2 text-xs font-medium text-zinc-300 hover:text-white whitespace-nowrap"
+      >
+        &#128204; Want to Watch (<span data-tab-count="want_to_watch" class="tabular-nums">0</span>)
+      </button>
+      <button
+        type="button"
+        role="tab"
+        data-watchlist-tab="maybe_later"
+        aria-selected="false"
+        class="rounded-md border border-white/15 bg-[#181A20] px-4 py-2 text-xs font-medium text-zinc-300 hover:text-white whitespace-nowrap"
+      >
+        &#129300; Maybe Later (<span data-tab-count="maybe_later" class="tabular-nums">0</span>)
+      </button>
+    </div>
+
+    <div id="watchlist-grid" class="mt-7 grid grid-cols-2 gap-5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5"></div>
+    <p id="watchlist-empty" class="mt-8 hidden text-sm text-zinc-400">
+      No titles in this list yet. Use the status buttons on any review card to add one.
+    </p>
+  </div>
+</div>

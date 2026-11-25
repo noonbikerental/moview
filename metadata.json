@@ -1,0 +1,6 @@
+{
+  "name": "Moview",
+  "description": "Original reviews of Hindi and Bollywood movies, OTT releases, and web series on moview.com.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

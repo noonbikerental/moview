@@ -1,0 +1,82 @@
+---
+pagination:
+  data: collections.movies
+  size: 12
+  alias: pagedMovies
+permalink: "{% if pagination.pageNumber == 0 %}/movies/index.html{% else %}/movies/page/{{ pagination.pageNumber + 1 }}/index.html{% endif %}"
+layout: layouts/base.njk
+title: "Movie Reviews"
+seo_title: "Hindi & Bollywood Movie Reviews | Moview"
+seo_description: "Reviews of theatrical Bollywood releases and direct-to-OTT Hindi movies with ratings, verdicts, and streaming details in India."
+breadcrumbs:
+  - name: "Home"
+    url: "/"
+  - name: "Reviews"
+    url: "/reviews/"
+  - name: "Movies"
+    url: "/movies/"
+---
+{% from "partials/review-card.njk" import reviewCard %}
+
+<div class="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:py-14">
+  <header class="border-b border-white/10 pb-8">
+    <h1 class="font-display text-3xl font-bold tracking-tight text-[#F5F5F5] sm:text-4xl">
+      Movie Reviews
+    </h1>
+    <p class="mt-2 max-w-2xl text-sm leading-relaxed text-zinc-400 sm:text-base">
+      Theatrical Bollywood features and direct-to-streaming Hindi films reviewed without hype.
+    </p>
+
+    <div class="mt-6 flex flex-wrap items-center gap-2">
+      <a
+        href="/reviews/"
+        class="rounded-md border border-white/15 bg-[#181A20] px-4 py-2 text-xs font-medium text-zinc-300 transition-colors hover:border-white/30 hover:text-white whitespace-nowrap"
+      >
+        All ({{ collections.reviews.length }})
+      </a>
+      <a
+        href="/movies/"
+        aria-current="page"
+        class="rounded-md bg-[#E50914] px-4 py-2 text-xs font-semibold text-white whitespace-nowrap"
+      >
+        Movies ({{ collections.movies.length }})
+      </a>
+      <a
+        href="/web-series/"
+        class="rounded-md border border-white/15 bg-[#181A20] px-4 py-2 text-xs font-medium text-zinc-300 transition-colors hover:border-white/30 hover:text-white whitespace-nowrap"
+      >
+        Web Series ({{ collections.webSeries.length }})
+      </a>
+    </div>
+  </header>
+
+  {% if pagedMovies.length > 0 %}
+    <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {% for review in pagedMovies %}
+        {{ reviewCard(review, tmdb) }}
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="mt-10 text-zinc-400">No movie reviews published yet.</p>
+  {% endif %}
+
+  {% if pagination.pages.length > 1 %}
+    <nav aria-label="Movies pagination" class="mt-12 flex items-center justify-between border-t border-white/10 pt-6 text-sm">
+      {% if pagination.href.previous %}
+        <a href="{{ pagination.href.previous }}" class="rounded-md border border-white/15 bg-[#181A20] px-4 py-2 font-medium text-zinc-200 hover:border-white/30">&larr; Newer</a>
+      {% else %}
+        <span></span>
+      {% endif %}
+
+      <span class="text-xs text-zinc-400 tabular-nums">
+        Page {{ pagination.pageNumber + 1 }} of {{ pagination.pages.length }}
+      </span>
+
+      {% if pagination.href.next %}
+        <a href="{{ pagination.href.next }}" class="rounded-md border border-white/15 bg-[#181A20] px-4 py-2 font-medium text-zinc-200 hover:border-white/30">Older &rarr;</a>
+      {% else %}
+        <span></span>
+      {% endif %}
+    </nav>
+  {% endif %}
+</div>

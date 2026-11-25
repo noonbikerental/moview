@@ -1,0 +1,91 @@
+{% from "partials/verdict-badge.njk" import verdictBadge %}
+
+{% macro discoveryRow(headingId, headingTitle, subtitle, items, allReviews) %}
+  {% if items and items.length > 0 %}
+    <section class="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:py-10" aria-labelledby="{{ headingId }}">
+      <div class="flex items-baseline justify-between gap-4">
+        <div>
+          <h2 id="{{ headingId }}" class="font-display text-xl font-bold text-[#F5F5F5] sm:text-2xl">
+            {{ headingTitle }}
+          </h2>
+          {% if subtitle %}
+            <p class="mt-1 text-sm text-zinc-400">{{ subtitle }}</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="moview-scroll-row mt-5 flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory">
+        {% for item in items %}
+          {% set matchedReview = allReviews | findReviewByTmdb(item.mediaType, item.id) %}
+          {% set cardUrl = matchedReview.url if matchedReview else ("/title/?id=" ~ item.id ~ "&type=" ~ item.mediaType) %}
+          {% set formatLabel = "Web Series" if item.mediaType == "tv" else "Movie" %}
+
+          <article class="group flex w-36 sm:w-44 shrink-0 snap-start flex-col overflow-hidden rounded-lg border border-white/10 bg-[#181A20] transition-colors duration-200 hover:border-white/25">
+            <a href="{{ cardUrl }}" class="relative block aspect-[2/3] w-full overflow-hidden bg-[#13151B]">
+              {% if item.posterUrl %}
+                <img
+                  src="{{ item.posterUrl }}"
+                  alt="{{ item.title }} poster"
+                  loading="lazy"
+                  decoding="async"
+                  referrerpolicy="no-referrer"
+                  class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+                  onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');"
+                />
+                <div class="poster-fallback hidden absolute inset-0 flex flex-col justify-between p-3">
+                  <span class="text-[11px] font-medium text-zinc-400">{{ formatLabel }}</span>
+                  <div>
+                    <p class="font-display text-sm font-bold leading-snug text-white line-clamp-3">{{ item.title }}</p>
+                    {% if item.year %}
+                      <p class="mt-1 text-[11px] text-zinc-400 tabular-nums">{{ item.year }}</p>
+                    {% endif %}
+                  </div>
+                </div>
+              {% else %}
+                <div class="poster-fallback flex h-full w-full flex-col justify-between p-3">
+                  <span class="text-[11px] font-medium text-zinc-400">{{ formatLabel }}</span>
+                  <div>
+                    <p class="font-display text-sm font-bold leading-snug text-white line-clamp-3">{{ item.title }}</p>
+                    {% if item.year %}
+                      <p class="mt-1 text-[11px] text-zinc-400 tabular-nums">{{ item.year }}</p>
+                    {% endif %}
+                  </div>
+                </div>
+              {% endif %}
+
+              <div class="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[#181A20] via-[#181A20]/35 to-transparent"></div>
+
+              {% if matchedReview %}
+                <div class="absolute right-2 top-2 rounded bg-[#0E0F13]/90 px-2 py-0.5 text-[11px] font-semibold text-white ring-1 ring-white/15 backdrop-blur-sm tabular-nums">
+                  <span class="text-[#E50914]">&#9733;</span> {{ matchedReview.data.rating | formatRating }}
+                </div>
+              {% endif %}
+            </a>
+
+            <div class="flex flex-1 flex-col p-3">
+              <div class="flex items-center gap-1.5 text-[11px] text-zinc-400 tabular-nums">
+                {% if item.year %}
+                  <span>{{ item.year }}</span>
+                  <span aria-hidden="true">&middot;</span>
+                {% endif %}
+                <span>{{ formatLabel }}</span>
+              </div>
+
+              <h3 class="mt-1 font-display text-sm font-semibold leading-snug text-[#F5F5F5] line-clamp-2 group-hover:text-white">
+                <a href="{{ cardUrl }}" class="focus:outline-none">{{ item.title }}</a>
+              </h3>
+
+              <div class="mt-auto pt-2.5">
+                {% if matchedReview %}
+                  {{ verdictBadge(matchedReview.data.verdict, "sm") }}
+                {% else %}
+                  <span class="text-[11px] font-medium text-zinc-400">No review yet</span>
+                {% endif %}
+              </div>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    </section>
+  {% endif %}
+{% endmacro %}

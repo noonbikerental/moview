@@ -1,0 +1,64 @@
+---
+pagination:
+  data: collections.platforms
+  size: 1
+  alias: platformObj
+permalink: "/platform/{{ platformObj.slug }}/index.html"
+layout: layouts/base.njk
+eleventyComputed:
+  title: "{{ platformObj.name }} Reviews"
+  seo_title: "Best Movies & Web Series on {{ platformObj.name }} — Reviews | Moview"
+  seo_description: "{{ platformObj.intro }}"
+  breadcrumbs:
+    - name: "Home"
+      url: "/"
+    - name: "Reviews"
+      url: "/reviews/"
+    - name: "{{ platformObj.name }}"
+      url: "/platform/{{ platformObj.slug }}/"
+---
+{% from "partials/review-card.njk" import reviewCard %}
+
+<div class="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:py-14">
+  <nav aria-label="Breadcrumb" class="mb-6 flex flex-wrap items-center gap-2 text-xs text-zinc-400">
+    <a href="/" class="hover:text-white">Home</a>
+    <span aria-hidden="true">/</span>
+    <a href="/reviews/" class="hover:text-white">Reviews</a>
+    <span aria-hidden="true">/</span>
+    <span class="text-zinc-200">{{ platformObj.name }}</span>
+  </nav>
+
+  <header class="border-b border-white/10 pb-8">
+    <h1 class="font-display text-3xl font-bold tracking-tight text-[#F5F5F5] sm:text-4xl">
+      {{ platformObj.name }} Reviews
+    </h1>
+    <p class="mt-2 max-w-2xl text-sm leading-relaxed text-zinc-400 sm:text-base">
+      {{ platformObj.intro }}
+    </p>
+
+    <div class="mt-6 flex flex-wrap gap-2">
+      {% for p in collections.platforms %}
+        <a
+          href="/platform/{{ p.slug }}/"
+          {% if p.slug == platformObj.slug %}aria-current="page" class="rounded-md bg-[#E50914] px-3.5 py-1.5 text-xs font-semibold text-white whitespace-nowrap"{% else %}class="rounded-md border border-white/15 bg-[#181A20] px-3.5 py-1.5 text-xs font-medium text-zinc-300 hover:border-white/30 hover:text-white whitespace-nowrap"{% endif %}
+        >
+          {{ p.name }} ({{ p.count }})
+        </a>
+      {% endfor %}
+    </div>
+  </header>
+
+  {% if platformObj.reviews.length > 0 %}
+    <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {% for review in platformObj.reviews %}
+        {{ reviewCard(review, tmdb) }}
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="mt-10 rounded-lg border border-white/10 bg-[#181A20] p-8">
+      <p class="text-sm text-zinc-300">
+        No reviews tagged for {{ platformObj.name }} yet. Check back soon or explore <a href="/reviews/" class="text-[#E50914] underline underline-offset-4">all reviews</a>.
+      </p>
+    </div>
+  {% endif %}
+</div>

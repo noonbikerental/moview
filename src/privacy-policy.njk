@@ -1,0 +1,55 @@
+---
+layout: layouts/base.njk
+title: "Privacy Policy"
+seo_title: "Privacy Policy | Moview"
+seo_description: "Privacy policy for Moview (moview.com), detailing what user data is stored for community accounts and how to delete your account."
+permalink: /privacy-policy/index.html
+breadcrumbs:
+  - name: "Home"
+    url: "/"
+  - name: "Privacy Policy"
+    url: "/privacy-policy/"
+---
+
+<div class="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:py-14">
+  <nav aria-label="Breadcrumb" class="mb-6 flex items-center gap-2 text-xs text-zinc-400">
+    <a href="/" class="hover:text-white">Home</a>
+    <span aria-hidden="true">/</span>
+    <span class="text-zinc-200">Privacy Policy</span>
+  </nav>
+
+  <h1 class="font-display text-3xl font-bold tracking-tight text-[#F5F5F5] sm:text-4xl">
+    Privacy Policy
+  </h1>
+  <p class="mt-2 text-xs text-zinc-400">Effective date: November 2026</p>
+
+  <div class="review-prose mt-8">
+    <p>
+      <strong>Moview</strong> ({{ site.domain }}) can be read without signing in. If you choose to create a viewer account to rate titles, write reviews, or save a watchlist, we store only the data needed to run those community features.
+    </p>
+
+    <h2>What User Data Is Stored</h2>
+    <p>
+      Account authentication and community records are stored in our Supabase (PostgreSQL) project:
+    </p>
+    <ul>
+      <li><strong>Authentication Details</strong>: Your email address and sign-in provider metadata (Google or email magic link) used strictly to authenticate your session. Your email address is never shown publicly.</li>
+      <li><strong>Public Profile</strong>: Your chosen username, optional display name, avatar URL, and bio (up to 160 characters).</li>
+      <li><strong>Viewer Ratings, Reviews &amp; Votes</strong>: Star ratings, review text, spoiler flags, helpful votes, and any moderation reports you submit (reports are visible only to site moderators).</li>
+      <li><strong>Watchlist</strong>: Titles you mark as Watched, Want to Watch, or Maybe Later, displayed on your watchlist and public profile.</li>
+    </ul>
+
+    <h2>How to Delete Your Account &amp; Data</h2>
+    <p>
+      You can permanently delete your account at any time by signing in, opening <a href="/settings/">Profile Settings</a> from your avatar menu, and using the <strong>Delete my account</strong> section. Confirming deletion immediately removes your authentication login record as well as your profile, reviews, votes, reports, and watchlist entries.
+    </p>
+    <p>
+      You may also request assistance by emailing <a href="mailto:{{ site.email }}">{{ site.email }}</a>.
+    </p>
+
+    <h2>Embedded Media &amp; Contact Form</h2>
+    <p>
+      If you submit a message via our <a href="/contact/">Contact form</a>, your name, email, and message are processed via Web3Forms solely to respond to your inquiry. Review pages load poster/backdrop images from TMDB and use click-to-load YouTube privacy-enhanced embeds (<code>youtube-nocookie.com</code>).
+    </p>
+  </div>
+</div>

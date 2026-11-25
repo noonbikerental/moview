@@ -1,0 +1,52 @@
+<footer class="mt-auto border-t border-white/10 bg-[#0E0F13] py-12">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6">
+    <div class="grid gap-10 md:grid-cols-4">
+      <div class="md:col-span-2">
+        <a href="/" class="font-display text-xl font-bold tracking-tight text-[#F5F5F5]">
+          Moview<span class="text-[#E50914]">.</span>
+        </a>
+        <p class="mt-3 max-w-md text-sm leading-relaxed text-zinc-400">
+          {{ site.description }}
+        </p>
+      </div>
+
+      <div>
+        <h2 class="font-display text-sm font-semibold text-white">Browse</h2>
+        <ul class="mt-3 space-y-2 text-sm text-zinc-400">
+          <li><a href="/reviews/" class="transition-colors hover:text-white">All Reviews</a></li>
+          <li><a href="/movies/" class="transition-colors hover:text-white">Movies</a></li>
+          <li><a href="/web-series/" class="transition-colors hover:text-white">Web Series</a></li>
+          <li><a href="/lists/" class="transition-colors hover:text-white">Watchlists</a></li>
+          <li><a href="/my-watchlist/" class="transition-colors hover:text-white">My Watchlist</a></li>
+          <li><a href="/platform/netflix/" class="transition-colors hover:text-white">Netflix</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h2 class="font-display text-sm font-semibold text-white">Publication</h2>
+        <ul class="mt-3 space-y-2 text-sm text-zinc-400">
+          <li><a href="/about/" class="transition-colors hover:text-white">About Moview</a></li>
+          <li><a href="/community-guidelines/" class="transition-colors hover:text-white">Community Guidelines</a></li>
+          <li><a href="/contact/" class="transition-colors hover:text-white">Contact</a></li>
+          <li><a href="/about-data/" class="transition-colors hover:text-white">About Data &amp; TMDB</a></li>
+          <li><a href="/privacy-policy/" class="transition-colors hover:text-white">Privacy Policy</a></li>
+          <li><a href="/disclaimer/" class="transition-colors hover:text-white">Disclaimer</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="mt-10 flex flex-col gap-4 border-t border-white/10 pt-8 sm:flex-row sm:items-center sm:justify-between">
+      <div class="flex flex-wrap items-center gap-3">
+        <a href="/about-data/" aria-label="TMDB Data Attribution" class="inline-flex shrink-0 items-center">
+          <img src="/assets/tmdb-logo.svg" alt="TMDB" width="96" height="14" loading="lazy" class="h-3.5 w-auto" />
+        </a>
+        <p class="text-xs text-zinc-400">
+          {{ site.tmdbAttribution }}
+        </p>
+      </div>
+      <p class="text-xs text-zinc-400">
+        &copy; {{ "now" | yearFromDate }} {{ site.name }} ({{ site.domain }})
+      </p>
+    </div>
+  </div>
+</footer>

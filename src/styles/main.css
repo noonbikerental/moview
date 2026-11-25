@@ -1,0 +1,154 @@
+@import "tailwindcss";
+@source "../";
+
+@theme {
+  --color-cinema-bg: #0E0F13;
+  --color-cinema-card: #181A20;
+  --color-cinema-elevated: #20232B;
+  --color-cinema-text: #F5F5F5;
+  --color-cinema-muted: #A1A1AA;
+  --color-cinema-accent: #E50914;
+  --color-cinema-accent-hover: #F40612;
+  --font-display: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  html {
+    background-color: #0E0F13;
+    color: #F5F5F5;
+    font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    background-color: #0E0F13;
+    color: #F5F5F5;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;
+    text-wrap: balance;
+    letter-spacing: -0.015em;
+  }
+
+  :focus-visible {
+    outline: 2px solid #E50914;
+    outline-offset: 2px;
+  }
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Editorial review reading column */
+.review-prose {
+  font-size: 1.0625rem;
+  line-height: 1.78;
+  color: #E4E4E7;
+  max-width: 68ch;
+}
+
+.review-prose > * + * {
+  margin-top: 1.35em;
+}
+
+.review-prose h2 {
+  font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #F5F5F5;
+  margin-top: 2.25rem;
+  margin-bottom: 0.75rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.review-prose h3 {
+  font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #F5F5F5;
+  margin-top: 1.75rem;
+}
+
+.review-prose p strong {
+  color: #FFFFFF;
+  font-weight: 600;
+}
+
+.review-prose a {
+  color: #F5F5F5;
+  text-decoration: underline;
+  text-decoration-color: #E50914;
+  text-underline-offset: 3px;
+}
+
+.review-prose a:hover {
+  color: #FFFFFF;
+}
+
+.review-prose ul,
+.review-prose ol {
+  padding-left: 1.4rem;
+  color: #D4D4D8;
+}
+
+.review-prose ul {
+  list-style-type: disc;
+}
+
+.review-prose ol {
+  list-style-type: decimal;
+}
+
+.review-prose li + li {
+  margin-top: 0.45rem;
+}
+
+.review-prose blockquote {
+  margin: 1.75rem 0;
+  padding: 1.125rem 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+  font-size: 1.15rem;
+  line-height: 1.6;
+  color: #FAFAFA;
+  font-style: italic;
+}
+
+/* Poster fallback pattern */
+.poster-fallback {
+  background: radial-gradient(circle at 25% 20%, rgba(229, 9, 20, 0.18), transparent 55%),
+    linear-gradient(160deg, #1E2028 0%, #111318 100%);
+}
+
+/* Horizontal discovery row scrollbar */
+.moview-scroll-row {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+.moview-scroll-row::-webkit-scrollbar {
+  height: 6px;
+}
+
+.moview-scroll-row::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.moview-scroll-row::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 9999px;
+}
+
+.moview-scroll-row::-webkit-scrollbar-thumb:hover {
+  background: rgba(229, 9, 20, 0.7);
+}
+

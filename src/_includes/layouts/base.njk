@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    {% include "partials/head.njk" %}
+  </head>
+  <body class="bg-[#0E0F13] text-[#F5F5F5] antialiased">
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-[#E50914] focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white"
+    >
+      Skip to main content
+    </a>
+
+    {% include "partials/header.njk" %}
+
+    <main id="main-content" class="flex-1">
+      {{ content | safe }}
+    </main>
+
+    {% include "partials/footer.njk" %}
+
+    {# Quick Sign-In Modal #}
+    <div
+      id="moview-signin-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="signin-modal-title"
+      class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4 backdrop-blur-sm"
+    >
+      <div class="relative w-full max-w-md rounded-lg border border-white/15 bg-[#181A20] p-6 shadow-2xl">
+        <button
+          type="button"
+          data-close-modal="moview-signin-modal"
+          aria-label="Close sign in dialog"
+          class="absolute right-4 top-4 rounded-md p-1.5 text-zinc-400 hover:bg-white/10 hover:text-white"
+        >
+          <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
+        <h2 id="signin-modal-title" class="font-display text-xl font-bold text-[#F5F5F5]">
+          Sign in to Moview
+        </h2>
+        <p class="mt-1.5 text-sm text-zinc-400">
+          Rate titles, share reviews, and save your personal watchlist.
+        </p>
+
+        <div class="mt-5 space-y-4">
+          <button
+            type="button"
+            data-google-signin
+            class="flex w-full items-center justify-center gap-2.5 rounded-md border border-white/20 bg-[#0E0F13] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:border-white/40 hover:bg-[#14161D]"
+          >
+            <svg class="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="#EA4335" d="M12 10.2v3.9h5.5c-.2 1.2-1.4 3.6-5.5 3.6-3.3 0-6-2.7-6-6s2.7-6 6-6c1.9 0 3.2.8 3.9 1.5l2.7-2.6C16.9 3 14.7 2 12 2 6.5 2 2 6.5 2 12s4.5 10 10 10c5.8 0 9.6-4.1 9.6-9.8 0-.7-.1-1.2-.2-1.8H12z"/>
+            </svg>
+            Continue with Google
+          </button>
+
+          <div class="relative flex items-center py-1">
+            <div class="flex-grow border-t border-white/10"></div>
+            <span class="mx-3 text-xs text-zinc-400">or email magic link</span>
+            <div class="flex-grow border-t border-white/10"></div>
+          </div>
+
+          <form data-magic-link-form class="space-y-3">
+            <div>
+              <label for="modal-magic-email" class="sr-only">Email address</label>
+              <input
+                id="modal-magic-email"
+                name="email"
+                type="email"
+                required
+                placeholder="you@example.com"
+                class="w-full rounded-md border border-white/15 bg-[#0E0F13] px-3.5 py-2.5 text-sm text-white placeholder-zinc-500 focus:border-[#E50914] focus:outline-none"
+              />
+            </div>
+            <button
+              type="submit"
+              class="w-full rounded-md bg-[#E50914] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#F40612]"
+            >
+              Send Magic Link
+            </button>
+            <p data-magic-link-status class="text-xs text-zinc-400" aria-live="polite"></p>
+          </form>
+
+          <p class="text-center text-xs text-zinc-400">
+            <a href="/sign-in/" class="underline underline-offset-4 hover:text-zinc-300">Open full sign-in page</a>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    {# Choose Username Onboarding Modal #}
+    <div
+      id="moview-username-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="username-modal-title"
+      class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4 backdrop-blur-sm"
+    >
+      <div class="w-full max-w-md rounded-lg border border-white/15 bg-[#181A20] p-6 shadow-2xl">
+        <h2 id="username-modal-title" class="font-display text-xl font-bold text-[#F5F5F5]">
+          Choose your username
+        </h2>
+        <p class="mt-1.5 text-sm text-zinc-400">
+          Pick a public handle for your Moview profile and reviews (3–20 characters: letters, numbers, underscores).
+        </p>
+
+        <form id="username-onboarding-form" class="mt-5 space-y-4">
+          <div>
+            <label for="onboarding-username-input" class="block text-xs font-medium text-zinc-300">Username</label>
+            <input
+              id="onboarding-username-input"
+              name="username"
+              type="text"
+              required
+              minlength="3"
+              maxlength="20"
+              pattern="[A-Za-z0-9_]{3,20}"
+              placeholder="e.g. cinema_fan_99"
+              class="mt-1.5 w-full rounded-md border border-white/15 bg-[#0E0F13] px-3.5 py-2.5 text-sm text-white placeholder-zinc-500 focus:border-[#E50914] focus:outline-none"
+            />
+          </div>
+          <p id="username-onboarding-status" class="text-xs text-zinc-400" aria-live="polite"></p>
+          <div class="flex items-center justify-end gap-3">
+            <button
+              type="submit"
+              class="rounded-md bg-[#E50914] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#F40612]"
+            >
+              Save Username
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    {# Report Review Modal #}
+    <div
+      id="moview-report-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="report-modal-title"
+      class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4 backdrop-blur-sm"
+    >
+      <div class="relative w-full max-w-md rounded-lg border border-white/15 bg-[#181A20] p-6 shadow-2xl">
+        <button
+          type="button"
+          data-close-modal="moview-report-modal"
+          aria-label="Close report dialog"
+          class="absolute right-4 top-4 rounded-md p-1.5 text-zinc-400 hover:bg-white/10 hover:text-white"
+        >
+          <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
+        <h2 id="report-modal-title" class="font-display text-lg font-bold text-[#F5F5F5]">
+          Report Review
+        </h2>
+        <p class="mt-1 text-sm text-zinc-400">
+          Tell moderators why this review violates our <a href="/community-guidelines/" class="underline underline-offset-4 hover:text-white">Community Guidelines</a>.
+        </p>
+
+        <form id="report-review-form" class="mt-4 space-y-4">
+          <input type="hidden" id="report-review-id" name="review_id" value="" />
+          <div>
+            <label for="report-reason-input" class="block text-xs font-medium text-zinc-300">Reason</label>
+            <textarea
+              id="report-reason-input"
+              name="reason"
+              rows="3"
+              required
+              minlength="3"
+              maxlength="500"
+              placeholder="e.g. Unmarked major spoiler, hate speech, spam link..."
+              class="mt-1.5 w-full rounded-md border border-white/15 bg-[#0E0F13] px-3.5 py-2.5 text-sm text-white placeholder-zinc-500 focus:border-[#E50914] focus:outline-none"
+            ></textarea>
+          </div>
+          <p id="report-review-status" class="text-xs text-zinc-400" aria-live="polite"></p>
+          <div class="flex items-center justify-end gap-3">
+            <button
+              type="button"
+              data-close-modal="moview-report-modal"
+              class="rounded-md border border-white/15 px-4 py-2 text-xs font-medium text-zinc-300 hover:text-white"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              class="rounded-md bg-[#E50914] px-4 py-2 text-xs font-semibold text-white hover:bg-[#F40612]"
+            >
+              Submit Report
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    {# Global Search Overlay Modal #}
+    <div
+      id="moview-search-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="search-modal-title"
+      class="hidden fixed inset-0 z-50 flex items-start justify-center bg-black/80 px-4 pt-12 pb-6 sm:pt-20 backdrop-blur-sm"
+    >
+      <div class="relative flex max-h-[82vh] w-full max-w-2xl flex-col overflow-hidden rounded-lg border border-white/15 bg-[#181A20] shadow-2xl">
+        <div class="flex items-center gap-3 border-b border-white/10 px-4 py-3.5">
+          <svg class="h-5 w-5 shrink-0 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m1.85-5.15a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          <h2 id="search-modal-title" class="sr-only">Search Moview reviews, movies, and web series</h2>
+          <label for="search-modal-input" class="sr-only">Search movies, web series, and reviews</label>
+          <input
+            id="search-modal-input"
+            type="search"
+            autocomplete="off"
+            spellcheck="false"
+            maxlength="60"
+            placeholder="Search Hindi movies, web series, or Moview reviews..."
+            class="w-full bg-transparent text-sm text-[#F5F5F5] placeholder-zinc-400 focus:outline-none sm:text-base"
+          />
+          <button
+            type="button"
+            data-close-modal="moview-search-modal"
+            aria-label="Close search overlay"
+            class="rounded-md border border-white/10 px-2.5 py-1 text-xs font-medium text-zinc-300 hover:border-white/30 hover:text-white whitespace-nowrap shrink-0"
+          >
+            Esc
+          </button>
+        </div>
+
+        <div id="search-modal-body" class="flex-1 overflow-y-auto p-4 sm:p-5 space-y-6">
+          <p id="search-modal-hint" class="text-sm text-zinc-400">
+            Type at least 2 characters to search Moview editorial reviews and all movies or web series. Use &uarr; &darr; and Enter to open a result.
+          </p>
+
+          <section id="search-modal-reviews-section" class="hidden" aria-labelledby="search-modal-reviews-heading">
+            <h3 id="search-modal-reviews-heading" class="font-display text-xs font-semibold uppercase tracking-wider text-[#E50914]">
+              Our Reviews
+            </h3>
+            <div id="search-modal-reviews-list" class="mt-2.5 space-y-2"></div>
+          </section>
+
+          <section id="search-modal-tmdb-section" class="hidden" aria-labelledby="search-modal-tmdb-heading">
+            <h3 id="search-modal-tmdb-heading" class="font-display text-xs font-semibold uppercase tracking-wider text-zinc-300">
+              All Movies &amp; Series
+            </h3>
+            <div id="search-modal-tmdb-list" class="mt-2.5 space-y-2"></div>
+          </section>
+        </div>
+
+        <div class="flex items-center justify-between gap-4 border-t border-white/10 bg-[#13151B] px-4 py-2.5 text-xs text-zinc-400">
+          <span class="hidden sm:inline">Navigate with &uarr; &darr; &middot; Open with Enter</span>
+          <a id="search-modal-full-link" href="/search/" class="font-medium text-zinc-200 hover:text-[#E50914] whitespace-nowrap ml-auto">
+            Open full search page &rarr;
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <script id="moview-supabase-config" type="application/json">{{ supabaseConfig | jsonLdScript | safe }}</script>
+    <script defer src="/assets/main.js"></script>
+    <script defer src="/assets/search.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script defer src="/assets/community.js"></script>
+  </body>
+</html>

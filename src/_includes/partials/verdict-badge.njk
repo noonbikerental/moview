@@ -1,0 +1,7 @@
+{% macro verdictBadge(verdict, size="sm") %}
+  {% set meta = verdict | verdictMeta %}
+  {% set pad = "px-2.5 py-1 text-xs" if size == "sm" else "px-3.5 py-1.5 text-sm" %}
+  <span class="inline-flex items-center gap-1.5 rounded-md border font-medium whitespace-nowrap shrink-0 {{ pad }} {{ meta.classes }}">
+    {{ meta.label }}
+  </span>
+{% endmacro %}

@@ -1,0 +1,118 @@
+---
+layout: layouts/base.njk
+---
+{% from "partials/verdict-badge.njk" import verdictBadge %}
+
+{% set listYear = date | yearFromDate %}
+
+<div class="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:py-14" data-pagefind-body>
+  <span class="hidden" data-pagefind-meta="title">{{ title }}</span>
+  <span class="hidden" data-pagefind-meta="verdict">Curated List</span>
+  <span class="hidden" data-pagefind-meta="media_type">List</span>
+  {% if listYear %}
+    <span class="hidden" data-pagefind-meta="year">{{ listYear }}</span>
+  {% endif %}
+
+  <nav aria-label="Breadcrumb" data-pagefind-ignore class="mb-6 flex flex-wrap items-center gap-2 text-xs text-zinc-400">
+    <a href="/" class="hover:text-white">Home</a>
+    <span aria-hidden="true">/</span>
+    <a href="/lists/" class="hover:text-white">Lists</a>
+    <span aria-hidden="true">/</span>
+    <span class="text-zinc-200">{{ title }}</span>
+  </nav>
+
+  <header class="max-w-3xl border-b border-white/10 pb-8">
+    <p class="text-xs font-medium text-zinc-400">
+      Curated Watchlist &middot; <time datetime="{{ date | isoDate }}">{{ date | readableDate }}</time>
+    </p>
+    <h1 class="mt-2 font-display text-3xl font-bold tracking-tight text-[#F5F5F5] sm:text-4xl">
+      {{ title }}
+    </h1>
+    <p class="mt-4 text-base leading-relaxed text-zinc-300">
+      {{ intro }}
+    </p>
+  </header>
+
+  {% if content %}
+    <div class="review-prose mt-8">
+      {{ content | safe }}
+    </div>
+  {% endif %}
+
+  <div class="mt-10 space-y-6">
+    {% for entry in items %}
+      {% set itemTmdb = tmdb | tmdbLookup(entry.type, entry.tmdb_id) %}
+      {% set matchedReview = collections.reviews | findReviewByTmdb(entry.type, entry.tmdb_id) %}
+      {% set itemTitle = (matchedReview and matchedReview.data.title) or (itemTmdb and itemTmdb.title) or ("Title #" ~ entry.tmdb_id) %}
+      {% set itemYear = (itemTmdb and itemTmdb.year) or "" %}
+      {% set formatLabel = "Web Series" if entry.type == "tv" else "Movie" %}
+
+      <article class="grid gap-5 rounded-lg border border-white/10 bg-[#181A20] p-4 sm:grid-cols-[140px_1fr] sm:p-5">
+        <div class="w-32 sm:w-full overflow-hidden rounded-md border border-white/10 bg-[#13151B]">
+          {% if itemTmdb and itemTmdb.posterUrl %}
+            <img
+              src="{{ itemTmdb.posterUrl }}"
+              alt="{{ itemTitle }} poster"
+              {% if loop.first %}data-pagefind-meta="poster[src]"{% endif %}
+              loading="lazy"
+              decoding="async"
+              referrerpolicy="no-referrer"
+              class="aspect-[2/3] w-full object-cover"
+              onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');"
+            />
+            <div class="poster-fallback hidden aspect-[2/3] w-full flex-col justify-between p-3">
+              <span class="text-xs text-zinc-400">#{{ loop.index }}</span>
+              <p class="font-display text-sm font-semibold text-white">{{ itemTitle }}</p>
+            </div>
+          {% else %}
+            <div class="poster-fallback flex aspect-[2/3] w-full flex-col justify-between p-3">
+              <span class="text-xs text-zinc-400">#{{ loop.index }}</span>
+              <p class="font-display text-sm font-semibold text-white">{{ itemTitle }}</p>
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="flex flex-col">
+          <div class="flex flex-wrap items-center gap-2 text-xs text-zinc-400 tabular-nums">
+            <span class="font-semibold text-[#E50914]">#{{ loop.index }}</span>
+            <span aria-hidden="true">&middot;</span>
+            <span>{{ formatLabel }}</span>
+            {% if itemYear %}
+              <span aria-hidden="true">&middot;</span>
+              <span>{{ itemYear }}</span>
+            {% endif %}
+            {% if itemTmdb and itemTmdb.genres and itemTmdb.genres.length > 0 %}
+              <span aria-hidden="true">&middot;</span>
+              <span>{{ itemTmdb.genres.slice(0, 3) | join(", ") }}</span>
+            {% endif %}
+          </div>
+
+          <h2 class="mt-2 font-display text-xl font-semibold text-[#F5F5F5]">
+            {% if matchedReview %}
+              <a href="{{ matchedReview.url }}" class="hover:text-[#E50914]">{{ itemTitle }}</a>
+            {% else %}
+              {{ itemTitle }}
+            {% endif %}
+          </h2>
+
+          <p class="mt-2.5 text-sm leading-relaxed text-zinc-300">
+            {{ entry.note or entry.short_note }}
+          </p>
+
+          {% if matchedReview %}
+            <div class="mt-auto flex flex-wrap items-center gap-3 pt-4">
+              {{ verdictBadge(matchedReview.data.verdict, "sm") }}
+              <span class="text-xs font-semibold text-zinc-200 tabular-nums">{{ matchedReview.data.rating | formatRating }} / 10</span>
+              <a
+                href="{{ matchedReview.url }}"
+                class="text-xs font-semibold text-[#E50914] hover:underline underline-offset-4"
+              >
+                Read full review &rarr;
+              </a>
+            </div>
+          {% endif %}
+        </div>
+      </article>
+    {% endfor %}
+  </div>
+</div>

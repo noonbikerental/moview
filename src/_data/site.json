@@ -1,0 +1,13 @@
+{
+  "name": "Moview",
+  "domain": "moview.com",
+  "url": "https://moview.com",
+  "tagline": "Original Reviews of Hindi Cinema, OTT Films & Web Series",
+  "description": "Independent, spoiler-aware reviews of Bollywood movies, Hindi OTT releases, and Indian web series with India streaming availability.",
+  "author": "Moview Editorial",
+  "email": "noonbikerentalteam@gmail.com",
+  "web3formsKey": "YOUR_WEB3FORMS_ACCESS_KEY",
+  "accentColor": "#E50914",
+  "tmdbAttribution": "This product uses the TMDB API but is not endorsed or certified by TMDB.",
+  "justwatchAttribution": "Data: JustWatch via TMDB"
+}

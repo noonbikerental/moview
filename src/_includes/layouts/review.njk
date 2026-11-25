@@ -1,0 +1,598 @@
+---
+layout: layouts/base.njk
+---
+{% from "partials/verdict-badge.njk" import verdictBadge %}
+{% from "partials/review-card.njk" import reviewCard %}
+
+{% set tmdbItem = tmdb | tmdbLookup(type, tmdb_id) %}
+{% set displayYear = (tmdbItem and tmdbItem.year) or (date | yearFromDate) %}
+{% set reviewGenres = page | getReviewGenres(tmdb) %}
+{% if reviewGenres.length == 0 and tmdbItem and tmdbItem.genres %}
+  {% set reviewGenres = tmdbItem.genres %}
+{% endif %}
+{% set formatLabel = "Web Series" if type == "tv" else "Movie" %}
+{% set relatedList = collections.reviews | relatedReviews(page, tmdb, 4) %}
+{% set posterPath = (tmdbItem and tmdbItem.posterPath) or "" %}
+
+<article data-pagefind-body>
+  <span class="hidden" data-pagefind-meta="title">{{ title }}</span>
+  <span class="hidden" data-pagefind-meta="verdict">{{ verdict }}</span>
+  <span class="hidden" data-pagefind-meta="rating">{{ rating | formatRating }}</span>
+  <span class="hidden" data-pagefind-meta="media_type">{{ formatLabel }}</span>
+  {% if displayYear %}
+    <span class="hidden" data-pagefind-meta="year">{{ displayYear }}</span>
+  {% endif %}
+
+  {# Hero Backdrop Header #}
+  <section class="relative overflow-hidden border-b border-white/10 bg-[#13151B]">
+    {% if tmdbItem and tmdbItem.backdropUrl %}
+      <img
+        src="{{ tmdbItem.backdropUrl }}"
+        alt="{{ title }} backdrop"
+        loading="lazy"
+        decoding="async"
+        referrerpolicy="no-referrer"
+        class="absolute inset-0 h-full w-full object-cover opacity-35"
+        onerror="this.style.display='none'"
+      />
+    {% endif %}
+    <div class="absolute inset-0 bg-gradient-to-t from-[#0E0F13] via-[#0E0F13]/85 to-[#0E0F13]/70"></div>
+
+    <div class="relative mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:py-12">
+      <nav aria-label="Breadcrumb" data-pagefind-ignore class="mb-6 flex flex-wrap items-center gap-2 text-xs text-zinc-400">
+        <a href="/" class="hover:text-white">Home</a>
+        <span aria-hidden="true">/</span>
+        <a href="/reviews/" class="hover:text-white">Reviews</a>
+        <span aria-hidden="true">/</span>
+        <span class="text-zinc-200">{{ title }}</span>
+      </nav>
+
+      <div class="grid gap-8 md:grid-cols-[220px_1fr] lg:grid-cols-[250px_1fr] md:items-end">
+        {# Poster #}
+        <div class="w-44 sm:w-52 md:w-full shrink-0 overflow-hidden rounded-lg border border-white/15 bg-[#181A20]">
+          {% if tmdbItem and tmdbItem.posterUrl %}
+            <img
+              src="{{ tmdbItem.posterUrl }}"
+              alt="{{ title }} poster"
+              data-pagefind-meta="poster[src]"
+              loading="lazy"
+              decoding="async"
+              referrerpolicy="no-referrer"
+              class="aspect-[2/3] w-full object-cover"
+              onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');"
+            />
+            <div class="poster-fallback hidden aspect-[2/3] w-full flex-col justify-between p-4">
+              <span class="text-xs font-medium text-zinc-400">{{ formatLabel }}</span>
+              <p class="font-display text-xl font-bold text-white">{{ title }}</p>
+            </div>
+          {% else %}
+            <div class="poster-fallback flex aspect-[2/3] w-full flex-col justify-between p-4">
+              <span class="text-xs font-medium text-zinc-400">{{ formatLabel }}</span>
+              <div>
+                <p class="font-display text-xl font-bold text-white">{{ title }}</p>
+                {% if displayYear %}
+                  <p class="mt-1 text-xs text-zinc-400 tabular-nums">{{ displayYear }}</p>
+                {% endif %}
+              </div>
+            </div>
+          {% endif %}
+        </div>
+
+        {# Title & Key Metadata #}
+        <div>
+          <div class="flex flex-wrap items-center gap-2 text-xs font-medium text-zinc-300">
+            <span>{{ formatLabel }}</span>
+            {% if season %}
+              <span aria-hidden="true">&middot;</span>
+              <span>Season {{ season }}</span>
+            {% endif %}
+            {% if displayYear %}
+              <span aria-hidden="true">&middot;</span>
+              <span class="tabular-nums">{{ displayYear }}</span>
+            {% endif %}
+            {% if type == "movie" and tmdbItem and tmdbItem.runtime %}
+              <span aria-hidden="true">&middot;</span>
+              <span class="tabular-nums">{{ tmdbItem.runtime | formatRuntime }}</span>
+            {% elif type == "tv" and tmdbItem and tmdbItem.numberOfSeasons %}
+              <span aria-hidden="true">&middot;</span>
+              <span class="tabular-nums">{{ tmdbItem.numberOfSeasons }} {{ "Season" if tmdbItem.numberOfSeasons == 1 else "Seasons" }}</span>
+            {% endif %}
+            {% if language %}
+              <span aria-hidden="true">&middot;</span>
+              <span>{{ language }}</span>
+            {% endif %}
+          </div>
+
+          <h1 class="mt-2 font-display text-3xl font-bold tracking-tight text-[#F5F5F5] sm:text-4xl lg:text-5xl">
+            {{ title }}
+          </h1>
+
+          {% if tmdbItem and tmdbItem.tagline %}
+            <p class="mt-2 text-base italic text-zinc-300">{{ tmdbItem.tagline }}</p>
+          {% endif %}
+
+          <p class="mt-4 max-w-2xl text-base leading-relaxed text-zinc-200">
+            {{ short_summary }}
+          </p>
+
+          {# Editorial Rating Box & Verdict #}
+          <div class="mt-6 flex flex-wrap items-center gap-4">
+            <div class="rounded-lg border border-white/15 bg-[#181A20] px-4 py-2">
+              <span class="block text-[11px] font-medium text-zinc-400">{{ site.name }} Rating</span>
+              <div class="flex items-baseline gap-1.5 tabular-nums">
+                <span class="font-display text-2xl font-bold text-[#E50914]">{{ rating | formatRating }}</span>
+                <span class="text-sm text-zinc-400">/ 10</span>
+              </div>
+            </div>
+            {{ verdictBadge(verdict, "lg") }}
+            <a
+              href="/platform/{{ platform | platformSlug }}/"
+              class="rounded-md border border-white/15 bg-[#181A20] px-3.5 py-2 text-sm font-medium text-zinc-200 transition-colors hover:border-white/30 hover:text-white"
+            >
+              Platform: {{ platform }}
+            </a>
+          </div>
+
+          {# Watchlist Status Picker #}
+          <div
+            class="mt-5 flex flex-wrap items-center gap-2"
+            data-pagefind-ignore
+            data-watchlist-picker
+            data-tmdb-id="{{ tmdb_id }}"
+            data-media-type="{{ type }}"
+            data-title="{{ title }}"
+            data-poster-path="{{ posterPath }}"
+          >
+            <span class="text-xs font-medium text-zinc-400 mr-1">My List:</span>
+            <button
+              type="button"
+              data-watchlist-status="watched"
+              aria-pressed="false"
+              class="rounded-md border border-white/15 bg-[#181A20] px-3 py-1.5 text-xs font-medium text-zinc-200 transition-colors hover:border-white/35 hover:text-white whitespace-nowrap"
+            >
+              &#9989; Watched
+            </button>
+            <button
+              type="button"
+              data-watchlist-status="want_to_watch"
+              aria-pressed="false"
+              class="rounded-md border border-white/15 bg-[#181A20] px-3 py-1.5 text-xs font-medium text-zinc-200 transition-colors hover:border-white/35 hover:text-white whitespace-nowrap"
+            >
+              &#128204; Want to Watch
+            </button>
+            <button
+              type="button"
+              data-watchlist-status="maybe_later"
+              aria-pressed="false"
+              class="rounded-md border border-white/15 bg-[#181A20] px-3 py-1.5 text-xs font-medium text-zinc-200 transition-colors hover:border-white/35 hover:text-white whitespace-nowrap"
+            >
+              &#129300; Maybe Later
+            </button>
+          </div>
+
+          {# Credits & Genres #}
+          <dl class="mt-6 grid gap-3 border-t border-white/10 pt-5 text-sm sm:grid-cols-2 lg:grid-cols-3">
+            {% if tmdbItem and tmdbItem.directorOrCreator %}
+              <div>
+                <dt class="text-xs text-zinc-400">{{ "Creator" if type == "tv" else "Director" }}</dt>
+                <dd class="mt-0.5 font-medium text-zinc-100">{{ tmdbItem.directorOrCreator }}</dd>
+              </div>
+            {% endif %}
+            {% if reviewGenres and reviewGenres.length > 0 %}
+              <div>
+                <dt class="text-xs text-zinc-400">Genres</dt>
+                <dd class="mt-0.5 flex flex-wrap gap-x-2 gap-y-1 font-medium text-zinc-100">
+                  {% for g in reviewGenres %}
+                    <a href="/genre/{{ g | slugify }}/" class="underline decoration-white/20 underline-offset-4 hover:decoration-[#E50914]">{{ g }}</a>{% if not loop.last %}<span class="text-zinc-500">,</span>{% endif %}
+                  {% endfor %}
+                </dd>
+              </div>
+            {% endif %}
+            <div>
+              <dt class="text-xs text-zinc-400">Reviewed by</dt>
+              <dd class="mt-0.5 font-medium text-zinc-100">{{ author or site.author }} &middot; <time datetime="{{ date | isoDate }}">{{ date | readableDate }}</time></dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {# Main Content + Watch Providers Sidebar #}
+  <div class="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:py-14">
+    <div class="grid gap-10 lg:grid-cols-[1fr_320px] lg:items-start">
+      {# Left Column: Spoiler Notice + Review Body + Trailer + Cast + Viewer Reviews #}
+      <div class="min-w-0">
+        {% if has_spoilers %}
+          <div role="note" class="mb-8 rounded-lg border border-amber-500/40 bg-amber-500/10 p-4 text-sm text-amber-200">
+            <p class="font-display font-semibold text-amber-100">Spoiler Warning</p>
+            <p class="mt-1 leading-relaxed text-amber-200/90">
+              This review discusses key plot turns and character arcs from {{ title }}. Read ahead with caution if you have not watched it yet.
+            </p>
+          </div>
+        {% endif %}
+
+        <div class="review-prose">
+          {{ content | safe }}
+        </div>
+
+        {# Viewer Reviews Section (Progressive Client-Side Community Layer) #}
+        <section
+          id="viewer-reviews"
+          data-pagefind-ignore
+          class="mt-12 border-t border-white/10 pt-10"
+          aria-labelledby="viewer-reviews-heading"
+          data-tmdb-id="{{ tmdb_id }}"
+          data-media-type="{{ type }}"
+          data-title="{{ title }}"
+          data-poster-path="{{ posterPath }}"
+        >
+          <div class="flex flex-wrap items-baseline justify-between gap-4">
+            <div>
+              <h2 id="viewer-reviews-heading" class="font-display text-2xl font-semibold text-[#F5F5F5]">
+                Viewer Reviews
+              </h2>
+              <p class="mt-1 text-xs text-zinc-400">
+                Community ratings out of 5 stars &mdash; separate from the {{ site.name }} Rating above.
+              </p>
+            </div>
+          </div>
+
+          {# Viewer Rating Summary + 5-to-1 Breakdown #}
+          <div class="mt-6 grid gap-6 rounded-lg border border-white/10 bg-[#181A20] p-5 sm:grid-cols-[190px_1fr] sm:items-center">
+            <div class="text-left sm:border-r sm:border-white/10 sm:pr-6">
+              <p class="text-xs font-medium text-zinc-400">Viewer Rating</p>
+              <div class="mt-1 flex items-baseline gap-2 tabular-nums">
+                <span id="viewer-avg-score" class="font-display text-3xl font-bold text-[#F5F5F5]">--</span>
+                <span class="text-sm text-zinc-400">/ 5</span>
+              </div>
+              <div id="viewer-avg-stars" class="mt-1.5 flex items-center gap-1 text-amber-400" aria-hidden="true"></div>
+              <p id="viewer-total-count" class="mt-1.5 text-xs text-zinc-400 tabular-nums">Loading viewer ratings...</p>
+            </div>
+
+            <div id="viewer-star-breakdown" class="space-y-1.5">
+              {% for star in [5, 4, 3, 2, 1] %}
+                <div class="flex items-center gap-3 text-xs tabular-nums">
+                  <span class="w-10 text-zinc-300">{{ star }} &#9733;</span>
+                  <div class="h-2 flex-1 overflow-hidden rounded-full bg-[#0E0F13]">
+                    <div
+                      data-breakdown-bar="{{ star }}"
+                      class="h-full rounded-full bg-[#E50914] transition-all duration-300"
+                      style="width: 0%"
+                    ></div>
+                  </div>
+                  <span data-breakdown-count="{{ star }}" class="w-8 text-right text-zinc-400">0</span>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+
+          {# Rate & Review Box #}
+          <div id="rate-review-box" class="mt-6 rounded-lg border border-white/10 bg-[#181A20] p-5">
+            <div id="rate-signed-out" class="flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <h3 class="font-display text-base font-semibold text-[#F5F5F5]">Rate &amp; Review {{ title }}</h3>
+                <p class="mt-1 text-sm text-zinc-400">Share your 5-star rating and thoughts with fellow viewers.</p>
+              </div>
+              <button
+                type="button"
+                data-auth-signin-trigger
+                class="rounded-md bg-[#E50914] px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-[#F40612] whitespace-nowrap"
+              >
+                Sign in to rate
+              </button>
+            </div>
+
+            <form id="viewer-review-form" class="hidden space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <h3 id="viewer-form-heading" class="font-display text-base font-semibold text-[#F5F5F5]">
+                  Your Rating &amp; Review
+                </h3>
+                <a href="/community-guidelines/" class="text-xs text-zinc-400 underline underline-offset-4 hover:text-white">
+                  Community Guidelines
+                </a>
+              </div>
+
+              <div>
+                <span class="block text-xs font-medium text-zinc-300">Your Rating</span>
+                <div id="star-rating-input" class="mt-1.5 flex items-center gap-1.5" role="radiogroup" aria-label="Rate from 1 to 5 stars">
+                  {% for n in [1, 2, 3, 4, 5] %}
+                    <button
+                      type="button"
+                      data-star-value="{{ n }}"
+                      aria-label="{{ n }} {{ 'star' if n == 1 else 'stars' }}"
+                      aria-pressed="false"
+                      class="rounded p-1 text-2xl leading-none text-zinc-600 transition-colors hover:text-amber-400"
+                    >
+                      &#9733;
+                    </button>
+                  {% endfor %}
+                  <span id="star-rating-label" class="ml-2 text-xs text-zinc-400 tabular-nums">Select a rating</span>
+                </div>
+              </div>
+
+              <div>
+                <div class="flex items-center justify-between">
+                  <label for="viewer-review-text" class="block text-xs font-medium text-zinc-300">
+                    Review (optional)
+                  </label>
+                  <span id="viewer-review-charcount" class="text-xs text-zinc-400 tabular-nums">0 / 2000</span>
+                </div>
+                <textarea
+                  id="viewer-review-text"
+                  name="review_text"
+                  rows="4"
+                  maxlength="2000"
+                  placeholder="What stood out—performances, pacing, music, or the ending?"
+                  class="mt-1.5 w-full rounded-md border border-white/15 bg-[#0E0F13] px-3.5 py-2.5 text-sm text-white placeholder-zinc-500 focus:border-[#E50914] focus:outline-none"
+                ></textarea>
+              </div>
+
+              <div class="flex flex-wrap items-center justify-between gap-4">
+                <label class="inline-flex items-center gap-2 text-xs text-zinc-300 cursor-pointer">
+                  <input
+                    id="viewer-review-spoilers"
+                    name="has_spoilers"
+                    type="checkbox"
+                    class="h-4 w-4 rounded border-white/25 bg-[#0E0F13] text-[#E50914] focus:ring-[#E50914]"
+                  />
+                  <span>Contains spoilers</span>
+                </label>
+
+                <div class="flex flex-wrap items-center gap-2.5">
+                  <button
+                    id="viewer-review-delete-btn"
+                    type="button"
+                    class="hidden rounded-md border border-rose-500/40 px-3.5 py-2 text-xs font-medium text-rose-300 hover:bg-rose-500/10"
+                  >
+                    Delete Review
+                  </button>
+                  <button
+                    id="viewer-review-submit-btn"
+                    type="submit"
+                    class="rounded-md bg-[#E50914] px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-[#F40612]"
+                  >
+                    Post Review
+                  </button>
+                </div>
+              </div>
+
+              <p id="viewer-review-status" class="text-xs text-zinc-400" aria-live="polite"></p>
+            </form>
+          </div>
+
+          {# Sort Controls & Reviews List #}
+          <div class="mt-8">
+            <div class="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-3">
+              <h3 class="font-display text-base font-semibold text-[#F5F5F5]">Community Feed</h3>
+              <div class="flex items-center gap-1 rounded-md border border-white/10 bg-[#181A20] p-1">
+                <button
+                  type="button"
+                  data-review-sort="helpful"
+                  aria-pressed="true"
+                  class="rounded px-3 py-1 text-xs font-semibold bg-[#E50914] text-white whitespace-nowrap"
+                >
+                  Most Helpful
+                </button>
+                <button
+                  type="button"
+                  data-review-sort="newest"
+                  aria-pressed="false"
+                  class="rounded px-3 py-1 text-xs font-medium text-zinc-300 hover:text-white whitespace-nowrap"
+                >
+                  Newest
+                </button>
+              </div>
+            </div>
+
+            <div id="viewer-reviews-list" class="mt-4 space-y-4">
+              <p class="text-sm text-zinc-400">Loading community reviews...</p>
+            </div>
+
+            <div id="viewer-reviews-load-more-wrap" class="mt-6 hidden text-center">
+              <button
+                id="viewer-reviews-load-more"
+                type="button"
+                class="rounded-md border border-white/15 bg-[#181A20] px-5 py-2.5 text-xs font-semibold text-zinc-200 transition-colors hover:border-white/35 hover:text-white"
+              >
+                Load 10 more reviews
+              </button>
+            </div>
+          </div>
+        </section>
+
+        {# Official YouTube Trailer (Lite Embed) #}
+        {% if tmdbItem and tmdbItem.trailerKey %}
+          <section data-pagefind-ignore class="mt-12 border-t border-white/10 pt-10" aria-labelledby="trailer-heading">
+            <h2 id="trailer-heading" class="font-display text-2xl font-semibold text-[#F5F5F5]">
+              Official Trailer
+            </h2>
+            <div
+              class="relative mt-4 aspect-video w-full overflow-hidden rounded-lg border border-white/10 bg-[#181A20]"
+              data-youtube-lite="{{ tmdbItem.trailerKey }}"
+              data-youtube-title="{{ title }} Official Trailer"
+            >
+              <img
+                src="https://i.ytimg.com/vi/{{ tmdbItem.trailerKey }}/hqdefault.jpg"
+                alt="{{ title }} trailer thumbnail"
+                loading="lazy"
+                decoding="async"
+                class="h-full w-full object-cover"
+              />
+              <div class="absolute inset-0 bg-black/35"></div>
+              <button
+                type="button"
+                data-youtube-trigger
+                aria-label="Play {{ title }} official trailer"
+                class="absolute inset-0 flex items-center justify-center group"
+              >
+                <span class="flex h-16 w-16 items-center justify-center rounded-full bg-[#E50914] text-white shadow-lg transition-transform duration-200 group-hover:scale-105 group-hover:bg-[#F40612]">
+                  <svg class="ml-1 h-7 w-7" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                </span>
+              </button>
+            </div>
+          </section>
+        {% endif %}
+
+        {# Top 8 Cast #}
+        {% if tmdbItem and tmdbItem.cast and tmdbItem.cast.length > 0 %}
+          <section data-pagefind-ignore class="mt-12 border-t border-white/10 pt-10" aria-labelledby="cast-heading">
+            <h2 id="cast-heading" class="font-display text-2xl font-semibold text-[#F5F5F5]">
+              Cast
+            </h2>
+            <div class="mt-5 grid grid-cols-2 gap-4 sm:grid-cols-4">
+              {% for actor in tmdbItem.cast %}
+                <div class="overflow-hidden rounded-lg border border-white/10 bg-[#181A20]">
+                  <div class="aspect-[4/5] w-full overflow-hidden bg-[#13151B]">
+                    {% if actor.profileUrl %}
+                      <img
+                        src="{{ actor.profileUrl }}"
+                        alt="{{ actor.name }}"
+                        loading="lazy"
+                        decoding="async"
+                        referrerpolicy="no-referrer"
+                        class="h-full w-full object-cover"
+                        onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');"
+                      />
+                      <div class="poster-fallback hidden h-full w-full items-center justify-center p-3 text-center text-xs text-zinc-400">
+                        {{ actor.name }}
+                      </div>
+                    {% else %}
+                      <div class="poster-fallback flex h-full w-full items-center justify-center p-3 text-center text-xs text-zinc-400">
+                        {{ actor.name }}
+                      </div>
+                    {% endif %}
+                  </div>
+                  <div class="p-3">
+                    <p class="text-sm font-semibold text-[#F5F5F5] leading-snug">{{ actor.name }}</p>
+                    {% if actor.character %}
+                      <p class="mt-0.5 text-xs text-zinc-400 leading-snug">{{ actor.character }}</p>
+                    {% endif %}
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          </section>
+        {% endif %}
+      </div>
+
+      {# Right Sidebar: Where to Watch in India + Synopsis #}
+      <aside data-pagefind-ignore class="space-y-6 lg:sticky lg:top-24">
+        <section class="rounded-lg border border-white/10 bg-[#181A20] p-5">
+          <h2 class="font-display text-lg font-semibold text-[#F5F5F5]">
+            Where to watch in India
+          </h2>
+
+          {% if tmdbItem and tmdbItem.watchProvidersIN and tmdbItem.watchProvidersIN.hasAny %}
+            {% if tmdbItem.watchProvidersIN.flatrate.length > 0 %}
+              <div class="mt-4">
+                <p class="text-xs font-medium text-zinc-400">Stream</p>
+                <ul class="mt-2 space-y-2.5">
+                  {% for provider in tmdbItem.watchProvidersIN.flatrate %}
+                    <li class="flex items-center gap-3">
+                      {% if provider.logoUrl %}
+                        <img
+                          src="{{ provider.logoUrl }}"
+                          alt="{{ provider.name }}"
+                          loading="lazy"
+                          decoding="async"
+                          referrerpolicy="no-referrer"
+                          class="h-8 w-8 rounded-md object-cover"
+                        />
+                      {% endif %}
+                      <span class="text-sm font-medium text-zinc-100">{{ provider.name }}</span>
+                    </li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endif %}
+
+            {% if tmdbItem.watchProvidersIN.rent.length > 0 %}
+              <div class="mt-4 border-t border-white/10 pt-4">
+                <p class="text-xs font-medium text-zinc-400">Rent</p>
+                <ul class="mt-2 space-y-2.5">
+                  {% for provider in tmdbItem.watchProvidersIN.rent %}
+                    <li class="flex items-center gap-3">
+                      {% if provider.logoUrl %}
+                        <img
+                          src="{{ provider.logoUrl }}"
+                          alt="{{ provider.name }}"
+                          loading="lazy"
+                          decoding="async"
+                          referrerpolicy="no-referrer"
+                          class="h-8 w-8 rounded-md object-cover"
+                        />
+                      {% endif %}
+                      <span class="text-sm font-medium text-zinc-100">{{ provider.name }}</span>
+                    </li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endif %}
+
+            {% if tmdbItem.watchProvidersIN.buy.length > 0 %}
+              <div class="mt-4 border-t border-white/10 pt-4">
+                <p class="text-xs font-medium text-zinc-400">Buy</p>
+                <ul class="mt-2 space-y-2.5">
+                  {% for provider in tmdbItem.watchProvidersIN.buy %}
+                    <li class="flex items-center gap-3">
+                      {% if provider.logoUrl %}
+                        <img
+                          src="{{ provider.logoUrl }}"
+                          alt="{{ provider.name }}"
+                          loading="lazy"
+                          decoding="async"
+                          referrerpolicy="no-referrer"
+                          class="h-8 w-8 rounded-md object-cover"
+                        />
+                      {% endif %}
+                      <span class="text-sm font-medium text-zinc-100">{{ provider.name }}</span>
+                    </li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endif %}
+          {% else %}
+            <p class="mt-3 text-sm text-zinc-300">
+              Not available on OTT yet
+            </p>
+          {% endif %}
+
+          <p class="mt-4 border-t border-white/10 pt-3 text-xs text-zinc-400">
+            {{ site.justwatchAttribution }}
+          </p>
+        </section>
+
+        {% if tmdbItem and tmdbItem.overview %}
+          <section class="rounded-lg border border-white/10 bg-[#181A20] p-5">
+            <h2 class="font-display text-base font-semibold text-[#F5F5F5]">Synopsis</h2>
+            <p class="mt-2 text-sm leading-relaxed text-zinc-400">
+              {{ tmdbItem.overview }}
+            </p>
+          </section>
+        {% endif %}
+      </aside>
+    </div>
+
+    {# You May Also Like #}
+    {% if relatedList and relatedList.length > 0 %}
+      <section data-pagefind-ignore class="mt-16 border-t border-white/10 pt-12" aria-labelledby="related-heading">
+        <div class="flex items-baseline justify-between gap-4">
+          <h2 id="related-heading" class="font-display text-2xl font-semibold text-[#F5F5F5]">
+            You may also like
+          </h2>
+          <a href="/reviews/" class="text-sm font-medium text-zinc-300 hover:text-[#E50914]">
+            All reviews &rarr;
+          </a>
+        </div>
+        <div class="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {% for rel in relatedList %}
+            {{ reviewCard(rel, tmdb) }}
+          {% endfor %}
+        </div>
+      </section>
+    {% endif %}
+  </div>
+</article>

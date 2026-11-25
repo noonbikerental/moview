@@ -1,0 +1,262 @@
+---
+layout: layouts/base.njk
+title: "Moview — Honest Hindi Movie, OTT & Web Series Reviews"
+seo_title: "Moview — Hindi Movie, OTT & Web Series Reviews"
+seo_description: "Original reviews of Bollywood movies, Hindi OTT releases, and web series across Netflix, Prime Video, JioHotstar, and theatres."
+permalink: /index.html
+---
+{% from "partials/verdict-badge.njk" import verdictBadge %}
+{% from "partials/review-card.njk" import reviewCard %}
+{% from "partials/discovery-row.njk" import discoveryRow %}
+
+{% set latestReview = collections.reviews[0] %}
+{% set latestList = collections.lists[0] %}
+
+{# 1. Hero Section featuring Latest Review #}
+{% if latestReview %}
+  {% set heroTmdb = tmdb | tmdbLookup(latestReview.data.type, latestReview.data.tmdb_id) %}
+  {% set heroYear = (heroTmdb and heroTmdb.year) or (latestReview.data.date | yearFromDate) %}
+  <section class="relative overflow-hidden border-b border-white/10 bg-[#13151B]">
+    {% if heroTmdb and heroTmdb.backdropUrl %}
+      <img
+        src="{{ heroTmdb.backdropUrl }}"
+        alt="{{ latestReview.data.title }} backdrop"
+        loading="lazy"
+        decoding="async"
+        referrerpolicy="no-referrer"
+        class="absolute inset-0 h-full w-full object-cover opacity-40"
+        onerror="this.style.display='none'"
+      />
+    {% endif %}
+    <div class="absolute inset-0 bg-gradient-to-r from-[#0E0F13] via-[#0E0F13]/85 to-[#0E0F13]/55"></div>
+    <div class="absolute inset-0 bg-gradient-to-t from-[#0E0F13] via-transparent to-[#0E0F13]/40"></div>
+
+    <div class="relative mx-auto max-w-6xl px-4 py-14 sm:px-6 lg:py-20">
+      <div class="max-w-2xl">
+        <div class="flex flex-wrap items-center gap-2 text-xs font-medium text-zinc-300">
+          <span class="text-[#E50914] font-semibold">Latest Review</span>
+          <span aria-hidden="true">&middot;</span>
+          <span>{{ latestReview.data.platform }}</span>
+          {% if heroYear %}
+            <span aria-hidden="true">&middot;</span>
+            <span class="tabular-nums">{{ heroYear }}</span>
+          {% endif %}
+          <span aria-hidden="true">&middot;</span>
+          <span>{{ "Web Series" if latestReview.data.type == "tv" else "Movie" }}</span>
+        </div>
+
+        <h1 class="mt-3 font-display text-3xl font-bold tracking-tight text-[#F5F5F5] sm:text-5xl">
+          {{ latestReview.data.title }}{% if latestReview.data.season %} <span class="font-medium text-zinc-400">(Season {{ latestReview.data.season }})</span>{% endif %}
+        </h1>
+
+        <p class="mt-4 text-base leading-relaxed text-zinc-200 sm:text-lg">
+          {{ latestReview.data.short_summary }}
+        </p>
+
+        <div class="mt-6 flex flex-wrap items-center gap-4">
+          <div class="flex items-baseline gap-1 rounded-md border border-white/15 bg-[#181A20]/90 px-3.5 py-2 tabular-nums">
+            <span class="font-display text-xl font-bold text-[#E50914]">{{ latestReview.data.rating | formatRating }}</span>
+            <span class="text-xs text-zinc-400">/ 10</span>
+          </div>
+          {{ verdictBadge(latestReview.data.verdict, "lg") }}
+        </div>
+
+        <div class="mt-7 flex flex-wrap items-center gap-4">
+          <a
+            href="{{ latestReview.url }}"
+            class="inline-flex items-center justify-center rounded-md bg-[#E50914] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#F40612]"
+          >
+            Read Full Review
+          </a>
+          <a
+            href="/reviews/"
+            class="inline-flex items-center justify-center rounded-md border border-white/20 bg-[#181A20]/80 px-5 py-3 text-sm font-medium text-zinc-200 transition-colors hover:border-white/40 hover:text-white"
+          >
+            Browse All Reviews
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+{% else %}
+  <section class="border-b border-white/10 bg-[#13151B] py-16">
+    <div class="mx-auto max-w-6xl px-4 sm:px-6">
+      <h1 class="font-display text-4xl font-bold text-white">Moview</h1>
+      <p class="mt-3 max-w-2xl text-zinc-300">{{ site.tagline }}</p>
+    </div>
+  </section>
+{% endif %}
+
+{# 2. Latest Reviews Grid #}
+<section class="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:py-16" aria-labelledby="latest-reviews-heading">
+  <div class="flex items-baseline justify-between gap-4">
+    <div>
+      <h2 id="latest-reviews-heading" class="font-display text-2xl font-bold text-[#F5F5F5]">
+        Latest Reviews
+      </h2>
+      <p class="mt-1 text-sm text-zinc-400">Recent verdicts across Hindi cinema and Indian streaming platforms.</p>
+    </div>
+    <a href="/reviews/" class="text-sm font-medium text-zinc-300 hover:text-[#E50914] whitespace-nowrap">
+      View all &rarr;
+    </a>
+  </div>
+
+  <div class="mt-7 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    {% for review in collections.reviews.slice(0, 6) %}
+      {{ reviewCard(review, tmdb) }}
+    {% endfor %}
+  </div>
+</section>
+
+{# 2B. Build-time TMDB Discovery Rows (hidden automatically if TMDB_API_KEY is unset or fails) #}
+{% if tmdbHome %}
+  {{ discoveryRow(
+    "trending-week-heading",
+    "Trending This Week",
+    "Movies and series generating buzz right now.",
+    tmdbHome.trendingWeek,
+    collections.reviews
+  ) }}
+
+  {{ discoveryRow(
+    "popular-india-heading",
+    "Popular in India",
+    "Trending Hindi cinema audiences are looking up across India.",
+    tmdbHome.popularIndia,
+    collections.reviews
+  ) }}
+
+  {{ discoveryRow(
+    "trending-series-heading",
+    "Trending Web Series",
+    "Top binge-worthy shows and returning seasons this week.",
+    tmdbHome.trendingSeries,
+    collections.reviews
+  ) }}
+{% endif %}
+
+{# 3. This Week on OTT (Latest List Spotlight) #}
+{% if latestList %}
+  <section class="border-y border-white/10 bg-[#13151B]/70 py-12 lg:py-16" aria-labelledby="ott-week-heading">
+    <div class="mx-auto max-w-6xl px-4 sm:px-6">
+      <div class="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+        <div>
+          <p class="text-xs font-semibold text-[#E50914]">This Week on OTT</p>
+          <h2 id="ott-week-heading" class="mt-1 font-display text-2xl font-bold text-[#F5F5F5]">
+            {{ latestList.data.title }}
+          </h2>
+          <p class="mt-2 max-w-2xl text-sm leading-relaxed text-zinc-400">
+            {{ latestList.data.intro }}
+          </p>
+        </div>
+        <a
+          href="{{ latestList.url }}"
+          class="inline-flex items-center justify-center rounded-md border border-white/15 bg-[#181A20] px-4 py-2 text-xs font-semibold text-white transition-colors hover:border-[#E50914] whitespace-nowrap shrink-0"
+        >
+          Explore Full List &rarr;
+        </a>
+      </div>
+
+      <div class="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+        {% for entry in latestList.data.items.slice(0, 5) %}
+          {% set itemTmdb = tmdb | tmdbLookup(entry.type, entry.tmdb_id) %}
+          {% set matchedReview = collections.reviews | findReviewByTmdb(entry.type, entry.tmdb_id) %}
+          {% set itemTitle = (matchedReview and matchedReview.data.title) or (itemTmdb and itemTmdb.title) or ("Title #" ~ entry.tmdb_id) %}
+          <article class="flex flex-col overflow-hidden rounded-lg border border-white/10 bg-[#181A20]">
+            <div class="aspect-[2/3] w-full overflow-hidden bg-[#111318]">
+              {% if itemTmdb and itemTmdb.posterUrl %}
+                <img
+                  src="{{ itemTmdb.posterUrl }}"
+                  alt="{{ itemTitle }} poster"
+                  loading="lazy"
+                  decoding="async"
+                  referrerpolicy="no-referrer"
+                  class="h-full w-full object-cover"
+                  onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');"
+                />
+                <div class="poster-fallback hidden h-full w-full flex-col justify-between p-3">
+                  <span class="text-xs text-zinc-400">{{ "Web Series" if entry.type == "tv" else "Movie" }}</span>
+                  <p class="font-display text-sm font-semibold text-white">{{ itemTitle }}</p>
+                </div>
+              {% else %}
+                <div class="poster-fallback flex h-full w-full flex-col justify-between p-3">
+                  <span class="text-xs text-zinc-400">{{ "Web Series" if entry.type == "tv" else "Movie" }}</span>
+                  <p class="font-display text-sm font-semibold text-white">{{ itemTitle }}</p>
+                </div>
+              {% endif %}
+            </div>
+            <div class="flex flex-1 flex-col p-3.5">
+              <h3 class="font-display text-sm font-semibold text-[#F5F5F5]">
+                {% if matchedReview %}
+                  <a href="{{ matchedReview.url }}" class="hover:text-[#E50914]">{{ itemTitle }}</a>
+                {% else %}
+                  {{ itemTitle }}
+                {% endif %}
+              </h3>
+              <p class="mt-1.5 line-clamp-3 text-xs leading-relaxed text-zinc-400">
+                {{ entry.note or entry.short_note }}
+              </p>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+{% endif %}
+
+{# 4. Must Watch Picks #}
+{% if collections.mustWatch.length > 0 %}
+  <section id="must-watch" class="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:py-16" aria-labelledby="must-watch-heading">
+    <div class="flex items-baseline justify-between gap-4">
+      <div>
+        <h2 id="must-watch-heading" class="font-display text-2xl font-bold text-[#F5F5F5]">
+          Must Watch Picks
+        </h2>
+        <p class="mt-1 text-sm text-zinc-400">Highest-rated movies and series that earned our strongest recommendation.</p>
+      </div>
+    </div>
+
+    <div class="mt-7 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {% for review in collections.mustWatch.slice(0, 6) %}
+        {{ reviewCard(review, tmdb) }}
+      {% endfor %}
+    </div>
+  </section>
+{% endif %}
+
+{# 5. Browse by Platform & Genre #}
+<section class="border-t border-white/10 bg-[#0E0F13] py-12 lg:py-16">
+  <div class="mx-auto grid max-w-6xl gap-10 px-4 sm:px-6 lg:grid-cols-2">
+    <div>
+      <h2 class="font-display text-xl font-bold text-[#F5F5F5]">Browse by Platform</h2>
+      <p class="mt-1 text-sm text-zinc-400">Jump straight to reviews on your streaming subscription.</p>
+      <div class="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3">
+        {% for platform in collections.platforms %}
+          <a
+            href="/platform/{{ platform.slug }}/"
+            class="flex items-center justify-between rounded-lg border border-white/10 bg-[#181A20] px-4 py-3 text-sm font-medium text-zinc-200 transition-colors hover:border-[#E50914] hover:text-white"
+          >
+            <span>{{ platform.name }}</span>
+            <span class="text-xs text-zinc-400 tabular-nums">{{ platform.count }}</span>
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div>
+      <h2 class="font-display text-xl font-bold text-[#F5F5F5]">Browse by Genre</h2>
+      <p class="mt-1 text-sm text-zinc-400">Explore reviews grouped by mood and storytelling style.</p>
+      <div class="mt-5 flex flex-wrap gap-2.5">
+        {% for genre in collections.genres %}
+          <a
+            href="/genre/{{ genre.slug }}/"
+            class="inline-flex items-center gap-2 rounded-lg border border-white/10 bg-[#181A20] px-4 py-2.5 text-sm font-medium text-zinc-200 transition-colors hover:border-[#E50914] hover:text-white"
+          >
+            <span>{{ genre.name }}</span>
+            <span class="text-xs text-zinc-400 tabular-nums">{{ genre.count }}</span>
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>

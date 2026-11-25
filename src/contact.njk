@@ -1,0 +1,107 @@
+---
+layout: layouts/base.njk
+title: "Contact"
+seo_title: "Contact Moview | Feedback, Corrections & Editorial Inquiries"
+seo_description: "Get in touch with Moview for editorial feedback, corrections, press screeners, or collaboration inquiries."
+permalink: /contact/index.html
+breadcrumbs:
+  - name: "Home"
+    url: "/"
+  - name: "Contact"
+    url: "/contact/"
+---
+
+<div class="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:py-14">
+  <nav aria-label="Breadcrumb" class="mb-6 flex items-center gap-2 text-xs text-zinc-400">
+    <a href="/" class="hover:text-white">Home</a>
+    <span aria-hidden="true">/</span>
+    <span class="text-zinc-200">Contact</span>
+  </nav>
+
+  <h1 class="font-display text-3xl font-bold tracking-tight text-[#F5F5F5] sm:text-4xl">
+    Contact Moview
+  </h1>
+  <p class="mt-3 max-w-2xl text-base leading-relaxed text-zinc-400">
+    Have a recommendation, correction, or press inquiry? Send a note below or reach out directly by email.
+  </p>
+
+  <div class="mt-10 grid gap-8 md:grid-cols-[1fr_280px]">
+    <form
+      id="moview-contact-form"
+      action="https://api.web3forms.com/submit"
+      method="POST"
+      class="space-y-5 rounded-lg border border-white/10 bg-[#181A20] p-6"
+    >
+      <input type="hidden" name="access_key" value="{{ site.web3formsKey }}" />
+      <input type="hidden" name="subject" value="New message from Moview ({{ site.domain }})" />
+      <input type="checkbox" name="botcheck" class="hidden" tabindex="-1" autocomplete="off" />
+
+      <div>
+        <label for="contact-name" class="block text-sm font-medium text-zinc-200">Name</label>
+        <input
+          id="contact-name"
+          name="name"
+          type="text"
+          required
+          placeholder="Your name"
+          class="mt-1.5 w-full rounded-md border border-white/15 bg-[#0E0F13] px-3.5 py-2.5 text-sm text-white placeholder-zinc-500 focus:border-[#E50914] focus:outline-none"
+        />
+      </div>
+
+      <div>
+        <label for="contact-email" class="block text-sm font-medium text-zinc-200">Email</label>
+        <input
+          id="contact-email"
+          name="email"
+          type="email"
+          required
+          placeholder="you@example.com"
+          class="mt-1.5 w-full rounded-md border border-white/15 bg-[#0E0F13] px-3.5 py-2.5 text-sm text-white placeholder-zinc-500 focus:border-[#E50914] focus:outline-none"
+        />
+      </div>
+
+      <div>
+        <label for="contact-message" class="block text-sm font-medium text-zinc-200">Message</label>
+        <textarea
+          id="contact-message"
+          name="message"
+          rows="5"
+          required
+          placeholder="Share a title suggestion, feedback, or inquiry..."
+          class="mt-1.5 w-full rounded-md border border-white/15 bg-[#0E0F13] px-3.5 py-2.5 text-sm text-white placeholder-zinc-500 focus:border-[#E50914] focus:outline-none"
+        ></textarea>
+      </div>
+
+      <button
+        type="submit"
+        class="inline-flex items-center justify-center rounded-md bg-[#E50914] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#F40612]"
+      >
+        Send Message
+      </button>
+
+      <p id="contact-form-status" class="text-sm text-zinc-400" aria-live="polite"></p>
+    </form>
+
+    <aside class="space-y-5 rounded-lg border border-white/10 bg-[#181A20] p-6">
+      <div>
+        <h2 class="font-display text-base font-semibold text-white">Direct Email</h2>
+        <p class="mt-2 text-sm text-zinc-400">
+          Prefer your own mail app? Write directly to:
+        </p>
+        <a
+          href="mailto:{{ site.email }}"
+          class="mt-2 inline-block break-all text-sm font-medium text-[#E50914] hover:underline underline-offset-4"
+        >
+          {{ site.email }}
+        </a>
+      </div>
+
+      <div class="border-t border-white/10 pt-4">
+        <h2 class="font-display text-base font-semibold text-white">Editorial Notes</h2>
+        <p class="mt-2 text-xs leading-relaxed text-zinc-400">
+          Moview does not accept paid reviews or publish sponsored ratings. Official screeners never guarantee positive coverage.
+        </p>
+      </div>
+    </aside>
+  </div>
+</div>

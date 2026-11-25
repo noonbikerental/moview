@@ -1,0 +1,55 @@
+---
+layout: layouts/base.njk
+title: "Admin Moderation"
+seo_title: "Admin Moderation | Moview"
+seo_description: "Moderation queue for reported community reviews and viewer review requests on Moview."
+permalink: /admin-moderation/index.html
+noindex: true
+---
+
+<div id="admin-moderation-root" class="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:py-14">
+  <header class="border-b border-white/10 pb-6">
+    <h1 class="font-display text-3xl font-bold tracking-tight text-[#F5F5F5]">
+      Admin Moderation
+    </h1>
+    <p class="mt-2 text-sm text-zinc-400">
+      Inspect reported viewer reviews and track the most requested titles from readers.
+    </p>
+  </header>
+
+  <div id="admin-unauthorized" class="mt-8 rounded-lg border border-white/10 bg-[#181A20] p-8 text-sm text-zinc-300">
+    Checking moderator access...
+  </div>
+
+  <div id="admin-reports-panel" class="mt-8 hidden space-y-12">
+    <section aria-labelledby="admin-reports-heading" class="space-y-4">
+      <div>
+        <h2 id="admin-reports-heading" class="font-display text-xl font-semibold text-[#F5F5F5]">
+          Reported Reviews
+        </h2>
+        <p class="mt-1 text-xs text-zinc-400">
+          Review flagged comments and hide or delete violations.
+        </p>
+      </div>
+      <div id="admin-reports-list" class="space-y-4"></div>
+      <p id="admin-reports-empty" class="hidden rounded-lg border border-white/10 bg-[#181A20] p-6 text-sm text-zinc-400">
+        No reported reviews in the queue right now.
+      </p>
+    </section>
+
+    <section aria-labelledby="admin-requests-heading" class="border-t border-white/10 pt-10 space-y-4">
+      <div>
+        <h2 id="admin-requests-heading" class="font-display text-xl font-semibold text-[#F5F5F5]">
+          Most Requested Titles
+        </h2>
+        <p class="mt-1 text-xs text-zinc-400">
+          Movies and web series readers asked Moview to review next, sorted by demand.
+        </p>
+      </div>
+      <div id="admin-requests-list" class="space-y-3"></div>
+      <p id="admin-requests-empty" class="hidden rounded-lg border border-white/10 bg-[#181A20] p-6 text-sm text-zinc-400">
+        No review requests submitted yet.
+      </p>
+    </section>
+  </div>
+</div>

@@ -1,0 +1,43 @@
+---
+layout: layouts/base.njk
+title: "About Our Data & TMDB Attribution"
+seo_title: "About Data & TMDB Attribution | Moview"
+seo_description: "Learn how Moview sources film metadata, cast credits, trailers, and India streaming availability via TMDB and JustWatch."
+permalink: /about-data/index.html
+breadcrumbs:
+  - name: "Home"
+    url: "/"
+  - name: "About Data"
+    url: "/about-data/"
+---
+
+<div class="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:py-14">
+  <nav aria-label="Breadcrumb" class="mb-6 flex items-center gap-2 text-xs text-zinc-400">
+    <a href="/" class="hover:text-white">Home</a>
+    <span aria-hidden="true">/</span>
+    <span class="text-zinc-200">About Data</span>
+  </nav>
+
+  <h1 class="font-display text-3xl font-bold tracking-tight text-[#F5F5F5] sm:text-4xl">
+    About Our Data &amp; TMDB Attribution
+  </h1>
+
+  <div class="mt-8 rounded-lg border border-white/10 bg-[#181A20] p-6 sm:p-8">
+    <div class="flex flex-wrap items-center gap-4">
+      <img src="/assets/tmdb-logo.svg" alt="The Movie Database (TMDB) logo" width="140" height="20" loading="lazy" class="h-5 w-auto" />
+    </div>
+    <p class="mt-4 text-base font-medium text-[#F5F5F5]">
+      {{ site.tmdbAttribution }}
+    </p>
+    <p class="mt-2 text-sm leading-relaxed text-zinc-400">
+      Cast credits, release dates, genres, official trailers, posters, and backdrops displayed alongside Moview reviews are retrieved at build time from The Movie Database (TMDB).
+    </p>
+  </div>
+
+  <div class="review-prose mt-8">
+    <h2>India Streaming Availability</h2>
+    <p>
+      "Where to watch in India" listings on review pages are powered by JustWatch regional watch provider data supplied via the TMDB API (region code <code>IN</code>). Availability across Netflix, Prime Video, JioHotstar, ZEE5, SonyLIV, and rental storefronts is refreshed whenever the site rebuilds.
+    </p>
+  </div>
+</div>

@@ -1,0 +1,46 @@
+---
+pagination:
+  data: collections.genres
+  size: 1
+  alias: genreObj
+permalink: "/genre/{{ genreObj.slug }}/index.html"
+layout: layouts/base.njk
+eleventyComputed:
+  title: "{{ genreObj.name }} Reviews"
+  seo_title: "{{ genreObj.name }} Movies & Web Series Reviews | Moview"
+  seo_description: "Original Hindi {{ genreObj.name | lower }} movie and web series reviews on Moview."
+  noindex: "{{ not genreObj.isIndexable }}"
+  breadcrumbs:
+    - name: "Home"
+      url: "/"
+    - name: "Reviews"
+      url: "/reviews/"
+    - name: "{{ genreObj.name }}"
+      url: "/genre/{{ genreObj.slug }}/"
+---
+{% from "partials/review-card.njk" import reviewCard %}
+
+<div class="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:py-14">
+  <nav aria-label="Breadcrumb" class="mb-6 flex flex-wrap items-center gap-2 text-xs text-zinc-400">
+    <a href="/" class="hover:text-white">Home</a>
+    <span aria-hidden="true">/</span>
+    <a href="/reviews/" class="hover:text-white">Reviews</a>
+    <span aria-hidden="true">/</span>
+    <span class="text-zinc-200">{{ genreObj.name }}</span>
+  </nav>
+
+  <header class="border-b border-white/10 pb-8">
+    <h1 class="font-display text-3xl font-bold tracking-tight text-[#F5F5F5] sm:text-4xl">
+      {{ genreObj.name }} Reviews
+    </h1>
+    <p class="mt-2 max-w-2xl text-sm leading-relaxed text-zinc-400 sm:text-base">
+      {{ genreObj.count }} {{ "review" if genreObj.count == 1 else "reviews" }} filed under {{ genreObj.name }}.
+    </p>
+  </header>
+
+  <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    {% for review in genreObj.reviews %}
+      {{ reviewCard(review, tmdb) }}
+    {% endfor %}
+  </div>
+</div>

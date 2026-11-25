@@ -1,0 +1,82 @@
+{% set resolvedTitle = seo_title or title or site.name %}
+{% if layout == "layouts/review.njk" and not seo_title %}
+  {% set resolvedTitle = title ~ " Review: " ~ verdict ~ " | " ~ site.name %}
+{% elif layout == "layouts/list.njk" and not seo_title %}
+  {% set resolvedTitle = title ~ " | " ~ site.name %}
+{% elif page.url != "/" and not seo_title and resolvedTitle != site.name %}
+  {% set resolvedTitle = resolvedTitle ~ " | " ~ site.name %}
+{% endif %}
+
+{% set resolvedDescription = seo_description or short_summary or intro or description or site.description %}
+{% set canonicalHref = page.url | absoluteUrl(site.url) %}
+
+{% set reviewTmdb = null %}
+{% if tmdb_id %}
+  {% set reviewTmdb = tmdb | tmdbLookup(type, tmdb_id) %}
+{% endif %}
+{% set resolvedOgImage = og_image or (reviewTmdb and (reviewTmdb.backdropUrl or reviewTmdb.posterUrl)) or "" %}
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>{{ resolvedTitle }}</title>
+<meta name="description" content="{{ resolvedDescription }}" />
+<link rel="canonical" href="{{ canonicalHref }}" />
+{% if noindex == true or noindex == "true" %}
+<meta name="robots" content="noindex, follow" />
+{% endif %}
+
+<meta property="og:type" content="{{ 'article' if layout == 'layouts/review.njk' else 'website' }}" />
+<meta property="og:title" content="{{ resolvedTitle }}" />
+<meta property="og:description" content="{{ resolvedDescription }}" />
+<meta property="og:url" content="{{ canonicalHref }}" />
+<meta property="og:site_name" content="{{ site.name }}" />
+{% if resolvedOgImage %}
+<meta property="og:image" content="{{ resolvedOgImage }}" />
+{% endif %}
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="{{ resolvedTitle }}" />
+<meta name="twitter:description" content="{{ resolvedDescription }}" />
+{% if resolvedOgImage %}
+<meta name="twitter:image" content="{{ resolvedOgImage }}" />
+{% endif %}
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap"
+  rel="stylesheet"
+/>
+<link rel="stylesheet" href="/assets/styles.css" />
+
+{% if layout == "layouts/review.njk" %}
+<script type="application/ld+json">
+{{ { title: title, type: type, date: date, rating: rating, verdict: verdict, short_summary: short_summary, seo_title: seo_title, author: author } | reviewJsonLd(reviewTmdb, site, page.url) | safe }}
+</script>
+{% elif layout == "layouts/list.njk" %}
+<script type="application/ld+json">
+{{ { title: title, intro: intro, items: items } | listJsonLd(tmdb, collections.reviews, site, page.url) | safe }}
+</script>
+{% endif %}
+
+{% if breadcrumbs and breadcrumbs.length > 0 %}
+<script type="application/ld+json">
+{{ breadcrumbs | breadcrumbJsonLd(site) | safe }}
+</script>
+{% elif layout == "layouts/review.njk" %}
+<script type="application/ld+json">
+{{ [
+  { name: "Home", url: "/" },
+  { name: "Reviews", url: "/reviews/" },
+  { name: title, url: page.url }
+] | breadcrumbJsonLd(site) | safe }}
+</script>
+{% elif layout == "layouts/list.njk" %}
+<script type="application/ld+json">
+{{ [
+  { name: "Home", url: "/" },
+  { name: "Lists", url: "/lists/" },
+  { name: title, url: page.url }
+] | breadcrumbJsonLd(site) | safe }}
+</script>
+{% endif %}

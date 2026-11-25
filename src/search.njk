@@ -1,0 +1,65 @@
+---
+layout: layouts/base.njk
+title: "Search Movies, Series & Reviews"
+seo_title: "Search | Moview"
+seo_description: "Search Moview editorial reviews, curated OTT lists, and all Hindi movies and web series."
+permalink: /search/index.html
+noindex: true
+---
+
+<div id="moview-search-page" class="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:py-14">
+  <header class="border-b border-white/10 pb-6">
+    <h1 class="font-display text-3xl font-bold tracking-tight text-[#F5F5F5]">
+      Search Moview
+    </h1>
+    <p class="mt-2 text-sm text-zinc-400">
+      Find our editorial reviews and curated lists first, or browse any movie or web series.
+    </p>
+
+    <form id="search-page-form" class="mt-5 flex flex-col gap-3 sm:flex-row" role="search">
+      <label for="search-page-input" class="sr-only">Search reviews, movies, and web series</label>
+      <input
+        id="search-page-input"
+        name="q"
+        type="search"
+        autocomplete="off"
+        spellcheck="false"
+        maxlength="60"
+        placeholder="Search by title, actor, platform, or topic..."
+        class="w-full flex-1 rounded-md border border-white/15 bg-[#181A20] px-4 py-3 text-sm text-[#F5F5F5] placeholder-zinc-400 focus:border-[#E50914] focus:outline-none sm:text-base"
+      />
+      <button
+        type="submit"
+        class="inline-flex items-center justify-center rounded-md bg-[#E50914] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#F40612] whitespace-nowrap shrink-0"
+      >
+        Search
+      </button>
+    </form>
+  </header>
+
+  <div class="mt-8 space-y-10">
+    <p id="search-page-hint" class="text-sm text-zinc-400">
+      Enter at least 2 characters to search our reviews and all movies or web series.
+    </p>
+
+    <section id="search-page-reviews-section" class="hidden" aria-labelledby="search-page-reviews-heading">
+      <div class="flex items-baseline justify-between gap-3 border-b border-white/10 pb-2.5">
+        <h2 id="search-page-reviews-heading" class="font-display text-xl font-semibold text-[#F5F5F5]">
+          Our Reviews
+        </h2>
+        <span class="text-xs text-zinc-400">Moview editorial index</span>
+      </div>
+      <div id="search-page-reviews-list" class="mt-4 grid gap-4 md:grid-cols-2"></div>
+    </section>
+
+    <section id="search-page-tmdb-section" class="hidden" aria-labelledby="search-page-tmdb-heading">
+      <div class="flex items-baseline justify-between gap-3 border-b border-white/10 pb-2.5">
+        <h2 id="search-page-tmdb-heading" class="font-display text-xl font-semibold text-[#F5F5F5]">
+          All Movies &amp; Series
+        </h2>
+        <span class="text-xs text-zinc-400">TMDB catalog</span>
+      </div>
+      <div id="search-page-tmdb-list" class="mt-4 grid gap-4 sm:grid-cols-2"></div>
+    </section>
+  </div>
+</div>

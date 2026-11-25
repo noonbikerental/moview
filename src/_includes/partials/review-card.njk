@@ -1,0 +1,121 @@
+{% from "partials/verdict-badge.njk" import verdictBadge %}
+
+{% macro reviewCard(review, tmdbMap) %}
+  {% set itemTmdb = tmdbMap | tmdbLookup(review.data.type, review.data.tmdb_id) %}
+  {% set displayYear = (itemTmdb and itemTmdb.year) or (review.data.date | yearFromDate) %}
+  {% set formatLabel = "Web Series" if review.data.type == "tv" else "Movie" %}
+  {% set posterPath = (itemTmdb and itemTmdb.posterPath) or "" %}
+
+  <article class="group flex flex-col overflow-hidden rounded-lg border border-white/10 bg-[#181A20] transition-colors duration-200 hover:border-white/25">
+    <a href="{{ review.url }}" class="relative block aspect-[2/3] w-full overflow-hidden bg-[#13151B]">
+      {% if itemTmdb and itemTmdb.posterUrl %}
+        <img
+          src="{{ itemTmdb.posterUrl }}"
+          alt="{{ review.data.title }} poster"
+          loading="lazy"
+          decoding="async"
+          referrerpolicy="no-referrer"
+          class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+          onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');"
+        />
+        <div class="poster-fallback hidden absolute inset-0 flex flex-col justify-between p-4">
+          <span class="text-xs font-medium text-zinc-400">{{ formatLabel }}</span>
+          <div>
+            <p class="font-display text-lg font-bold leading-snug text-white">{{ review.data.title }}</p>
+            {% if displayYear %}
+              <p class="mt-1 text-xs text-zinc-400 tabular-nums">{{ displayYear }}</p>
+            {% endif %}
+          </div>
+        </div>
+      {% else %}
+        <div class="poster-fallback flex h-full w-full flex-col justify-between p-4">
+          <span class="text-xs font-medium text-zinc-400">{{ formatLabel }}</span>
+          <div>
+            <p class="font-display text-lg font-bold leading-snug text-white">{{ review.data.title }}</p>
+            {% if displayYear %}
+              <p class="mt-1 text-xs text-zinc-400 tabular-nums">{{ displayYear }}</p>
+            {% endif %}
+          </div>
+        </div>
+      {% endif %}
+
+      <div class="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-[#181A20] via-[#181A20]/40 to-transparent"></div>
+
+      <div class="absolute right-3 top-3 rounded-md bg-[#0E0F13]/90 px-2.5 py-1 text-xs font-semibold text-white ring-1 ring-white/15 backdrop-blur-sm tabular-nums">
+        <span class="text-[#E50914]">&#9733;</span> {{ review.data.rating | formatRating }}
+      </div>
+    </a>
+
+    <div class="flex flex-1 flex-col p-4 sm:p-5">
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <div class="flex flex-wrap items-center gap-1.5 text-xs text-zinc-400 tabular-nums">
+          {% if displayYear %}
+            <span>{{ displayYear }}</span>
+            <span aria-hidden="true">&middot;</span>
+          {% endif %}
+          <span>{{ review.data.platform }}</span>
+          <span aria-hidden="true">&middot;</span>
+          <span>{{ formatLabel }}</span>
+        </div>
+      </div>
+
+      <h3 class="mt-2 font-display text-lg font-semibold leading-snug text-[#F5F5F5] group-hover:text-white">
+        <a href="{{ review.url }}" class="focus:outline-none">
+          {{ review.data.title }}{% if review.data.season %} <span class="text-sm font-normal text-zinc-400">(S{{ review.data.season }})</span>{% endif %}
+        </a>
+      </h3>
+
+      <p class="mt-2 line-clamp-2 text-sm leading-relaxed text-zinc-400">
+        {{ review.data.short_summary }}
+      </p>
+
+      <div class="mt-auto flex items-center justify-between gap-3 pt-4">
+        {{ verdictBadge(review.data.verdict, "sm") }}
+        <a
+          href="{{ review.url }}"
+          class="text-xs font-medium text-zinc-300 transition-colors hover:text-[#E50914] whitespace-nowrap"
+        >
+          Read review &rarr;
+        </a>
+      </div>
+
+      {# Compact Watchlist Status Picker #}
+      <div
+        class="mt-3 flex flex-wrap items-center gap-1.5 border-t border-white/10 pt-3"
+        data-watchlist-picker
+        data-tmdb-id="{{ review.data.tmdb_id }}"
+        data-media-type="{{ review.data.type }}"
+        data-title="{{ review.data.title }}"
+        data-poster-path="{{ posterPath }}"
+      >
+        <button
+          type="button"
+          data-watchlist-status="watched"
+          aria-pressed="false"
+          title="Mark as Watched"
+          class="rounded border border-white/10 bg-[#0E0F13] px-2 py-1 text-[11px] font-medium text-zinc-300 transition-colors hover:border-white/30 hover:text-white whitespace-nowrap"
+        >
+          &#9989; Watched
+        </button>
+        <button
+          type="button"
+          data-watchlist-status="want_to_watch"
+          aria-pressed="false"
+          title="Save to Want to Watch"
+          class="rounded border border-white/10 bg-[#0E0F13] px-2 py-1 text-[11px] font-medium text-zinc-300 transition-colors hover:border-white/30 hover:text-white whitespace-nowrap"
+        >
+          &#128204; Want to Watch
+        </button>
+        <button
+          type="button"
+          data-watchlist-status="maybe_later"
+          aria-pressed="false"
+          title="Save to Maybe Later"
+          class="rounded border border-white/10 bg-[#0E0F13] px-2 py-1 text-[11px] font-medium text-zinc-300 transition-colors hover:border-white/30 hover:text-white whitespace-nowrap"
+        >
+          &#129300; Maybe Later
+        </button>
+      </div>
+    </div>
+  </article>
+{% endmacro %}
